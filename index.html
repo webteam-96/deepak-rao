@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="en" class="js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Master Mind -- Deepak RAO</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Manrope:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0A0807; --black-2:#110D0A; --panel:#16110C; --ivory:#F4ECDD; --muted:#B4A890; --dim:#7D705D;
+  --gold:#D9B25E; --gold-deep:#8A6524; --gold-hi:#FFF0C2; --line:rgba(217,178,94,.2); --line-2:rgba(217,178,94,.42);
+  --serif:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif; --sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --gut:clamp(16px,4.2vw,64px); --max:1320px; --ease:cubic-bezier(.2,.75,.15,1);
+  --metal:linear-gradient(100deg,#B08336 0%,#DDB866 22%,#FFF0C2 42%,#E7C473 55%,#B48A3C 78%,#E9CB7D 100%);
+}
+*{box-sizing:border-box}
+html{background:var(--black);color:var(--ivory);-webkit-text-size-adjust:100%}
+body{margin:0;font:400 1.0625rem/1.7 var(--sans);background:var(--black);overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+::selection{background:var(--gold);color:var(--black)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:2px}
+.wrap{width:min(100%,var(--max));margin-inline:auto;padding-inline:var(--gut)}
+.skip{position:fixed;left:16px;top:-80px;z-index:200;background:var(--gold);color:var(--black);padding:10px 16px;font-weight:700;border-radius:6px;text-decoration:none}
+.skip:focus{top:16px}
+.gold{background:var(--metal);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+.grain{position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1.2s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-4%)}60%{transform:translate(-2%,-2%)}80%{transform:translate(4%,2%)}100%{transform:translate(0,0)}}
+
+/* ---------- loader ---------- */
+.loader{position:fixed;inset:0;z-index:150;display:grid;place-items:center;background:var(--black);transition:clip-path 1.1s var(--ease),visibility 0s 1.1s;clip-path:inset(0 0 0 0)}
+.loader-inner{width:min(70vw,460px);display:grid;gap:22px;justify-items:center}
+.loader img{width:100%;filter:drop-shadow(0 0 24px rgba(217,178,94,.35));animation:shine 1.6s ease-in-out infinite alternate}
+.loader-line{display:block;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform-origin:left;animation:load 1.2s var(--ease) forwards}
+@keyframes load{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes shine{from{filter:drop-shadow(0 0 10px rgba(217,178,94,.2)) brightness(.9)}to{filter:drop-shadow(0 0 30px rgba(217,178,94,.5)) brightness(1.15)}}
+.loaded .loader{clip-path:inset(0 0 100% 0);visibility:hidden}
+html:not(.js) .loader{display:none}
+
+/* ---------- header ---------- */
+.hdr{position:fixed;inset:0 0 auto;z-index:60;transition:transform .5s var(--ease),background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+.hdr.solid{background:rgba(10,8,7,.74);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:var(--line)}
+.hdr.away{transform:translateY(-110%)}
+.hdr .wrap{display:flex;align-items:center;gap:28px;height:78px}
+.brand{display:grid;gap:2px;text-decoration:none;flex:0 0 auto}
+.brand small{font:600 .74rem/1 var(--sans);letter-spacing:.06em;color:var(--muted)}
+.brand img{width:172px;filter:drop-shadow(0 2px 10px rgba(0,0,0,.6))}
+.nav{display:flex;gap:4px 26px;margin-left:auto;font-size:.88rem;font-weight:500;flex-wrap:wrap;justify-content:flex-end}
+.nav a{text-decoration:none;color:var(--ivory);opacity:.78;white-space:nowrap;position:relative;padding:6px 0;transition:opacity .3s}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform .45s var(--ease)}
+.nav a:hover{opacity:1}.nav a:hover::after{transform:scaleX(1);transform-origin:left}
+.menu-btn{display:none;margin-left:auto;background:none;border:1px solid var(--line-2);color:var(--ivory);font:600 .9rem var(--sans);border-radius:999px;padding:0 20px;height:44px;cursor:pointer}
+
+/* ---------- buttons ---------- */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:54px;padding:0 28px;border-radius:999px;font:600 .95rem/1 var(--sans);letter-spacing:.01em;text-decoration:none;white-space:nowrap;overflow:hidden;isolation:isolate;transition:transform .5s var(--ease),box-shadow .5s,background .4s,color .4s,border-color .4s}
+.btn-gold{background:var(--metal);background-size:200% 100%;color:#1B1308;box-shadow:0 10px 40px -10px rgba(217,178,94,.55)}
+.btn-gold::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.65) 50%,transparent 70%);transform:translateX(-120%);transition:transform .9s var(--ease)}
+.btn-gold:hover::before{transform:translateX(120%)}
+.btn-gold:hover{box-shadow:0 18px 50px -12px rgba(217,178,94,.75)}
+.btn-ghost{border:1px solid var(--line-2);color:var(--ivory);background:rgba(255,240,194,.02)}
+.btn-ghost:hover{border-color:var(--gold);background:rgba(217,178,94,.1)}
+.hdr .btn{min-height:46px;padding:0 22px;font-size:.88rem}
+.ico{width:18px;height:18px;flex:0 0 auto}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden;background:#000;isolation:isolate}
+.hero-media{position:absolute;inset:0 0 auto 0;height:min(84vh,64vw);z-index:-3;overflow:hidden}
+.hero-media img{width:100%;height:100%;object-fit:cover;object-position:50% 0;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 30%,transparent 60%);mask-image:linear-gradient(to bottom,#000 0%,#000 30%,transparent 60%);filter:contrast(1.06) saturate(1.05) brightness(.9);transform-origin:50% 20%}
+.hero::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(70% 55% at 50% 18%,transparent 0%,rgba(0,0,0,.25) 60%,rgba(0,0,0,.7) 100%),linear-gradient(to right,rgba(0,0,0,.55),transparent 45%)}
+.hero::after{content:"";position:absolute;inset:0 0 auto;height:190px;z-index:-1;background:linear-gradient(rgba(0,0,0,.72),transparent);pointer-events:none}
+.beams{position:absolute;inset:0;z-index:-1;pointer-events:none;mix-blend-mode:screen}
+.beams i{position:absolute;top:-8%;width:30vw;height:92%;background:linear-gradient(to bottom,rgba(255,232,180,.42),rgba(255,232,180,.06) 62%,transparent 80%);clip-path:polygon(44% 0,56% 0,100% 100%,0 100%);filter:blur(14px);transform-origin:50% 0;opacity:.55;animation:sway 11s ease-in-out infinite alternate}
+.beams i:nth-child(1){left:6%;--r:-16deg;animation-duration:13s}
+.beams i:nth-child(2){left:34%;--r:7deg;opacity:.38;animation-duration:10s}
+.beams i:nth-child(3){left:60%;--r:-6deg;opacity:.5;animation-duration:12s}
+@keyframes sway{from{transform:rotate(var(--r))}to{transform:rotate(calc(var(--r) * -1 + 4deg))}}
+.dust{position:absolute;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none}
+.hero-inner{position:relative;padding-bottom:clamp(56px,10vh,110px);padding-top:120px;width:min(100%,var(--max))}
+.moniker{margin:0 0 .4rem;font:italic 500 clamp(1.25rem,2.2vw,1.9rem)/1 var(--serif);color:var(--gold)}
+.title{margin:0;font:500 clamp(3.6rem,11.4vw,11rem)/.9 var(--serif);letter-spacing:-.025em;color:var(--ivory);text-shadow:0 0 60px rgba(255,220,150,.18)}
+.title .ch{display:inline-block;will-change:transform}
+.title .w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .08em .06em;margin:0 -.08em}
+.claim{margin:.25em 0 0;font:400 clamp(1.9rem,4.6vw,4.3rem)/1.05 var(--serif);letter-spacing:-.01em}
+.claim.gold{animation:sheen 6s ease-in-out infinite}
+@keyframes sheen{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.pitch{max-width:58ch;margin:1.4rem 0 0;color:var(--muted);font-size:clamp(1rem,1.3vw,1.15rem);line-height:1.75}
+.ctas{display:flex;flex-wrap:wrap;gap:14px;margin-top:2rem}
+.seal{position:absolute;right:max(var(--gut),6vw);bottom:clamp(120px,22vh,240px);width:clamp(108px,12vw,196px);z-index:1;filter:drop-shadow(0 18px 40px rgba(0,0,0,.65));animation:float 7s ease-in-out infinite}
+@keyframes float{0%,100%{translate:0 0;rotate:-6deg}50%{translate:0 -14px;rotate:4deg}}
+.cue{position:absolute;left:50%;bottom:22px;width:1px;height:56px;background:linear-gradient(var(--line-2),transparent);overflow:hidden}
+.cue::after{content:"";position:absolute;left:-1px;top:-20px;width:3px;height:20px;background:var(--gold);border-radius:2px;animation:cue 2.2s var(--ease) infinite}
+@keyframes cue{to{top:60px}}
+
+/* ---------- marquee ---------- */
+.mq{position:relative;padding:clamp(26px,4vw,46px) 0;border-block:1px solid var(--line);overflow:hidden;background:linear-gradient(180deg,#0D0A08,#0A0807)}
+.mq::before,.mq::after{content:"";position:absolute;top:0;bottom:0;width:12vw;z-index:2;pointer-events:none}
+.mq::before{left:0;background:linear-gradient(90deg,var(--black),transparent)}
+.mq::after{right:0;background:linear-gradient(-90deg,var(--black),transparent)}
+.mq-row{display:flex;width:max-content}
+.mq-row+.mq-row{margin-top:clamp(8px,1.4vw,16px)}
+.mq-track{display:flex;align-items:center;gap:2.6rem;padding-right:2.6rem;animation:mq var(--dur,160s) linear infinite}
+.mq-row.rev .mq-track{animation-direction:reverse}
+.mq-track span{font:italic 400 clamp(1.35rem,2.5vw,2.3rem)/1.25 var(--serif);white-space:nowrap;color:transparent;-webkit-text-stroke:1px rgba(217,178,94,.6)}
+.mq-track span:nth-child(4n+1){color:var(--ivory);-webkit-text-stroke:0;font-style:normal}
+.mq-track span::after{content:"";display:inline-block;width:7px;height:7px;margin-left:2.6rem;vertical-align:middle;rotate:45deg;background:var(--gold);opacity:.7}
+.mq:hover .mq-track{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ---------- sections ---------- */
+section{position:relative}
+.sec{padding:clamp(88px,13vw,180px) 0}
+.h2{margin:0;font:400 clamp(2.5rem,5.6vw,5.4rem)/1.02 var(--serif);letter-spacing:-.02em}
+.h2 em{font-style:italic}
+.lead{font:300 clamp(1.15rem,1.7vw,1.5rem)/1.6 var(--sans);color:var(--ivory)}
+.muted{color:var(--muted)}
+.rule{display:block;height:1px;background:linear-gradient(90deg,var(--gold),transparent);transform-origin:left;margin:28px 0}
+.split .w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .12em .08em;margin:0 -.12em -.08em}
+.split.done .w,.intro-done .title .w{overflow:visible}
+.split .wi{display:inline-block}
+
+/* show */
+.show{overflow:hidden;background:radial-gradient(60% 50% at 85% 30%,rgba(217,178,94,.08),transparent 70%),var(--black)}
+.show-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(40px,7vw,110px);align-items:center}
+.show-copy .lead{margin:1.6rem 0 0}
+.show-copy p{margin:1.1rem 0 0;max-width:52ch}
+.poster{position:relative;perspective:1200px}
+.poster-card{position:relative;border-radius:6px;transform-style:preserve-3d;transition:transform .6s var(--ease)}
+.poster-card img{border-radius:6px;box-shadow:0 40px 80px -30px rgba(0,0,0,.9),0 0 0 1px var(--line-2)}
+.poster-card::after{content:"";position:absolute;inset:-14px;border:1px solid var(--line);border-radius:12px;pointer-events:none}
+.poster-glow{position:absolute;inset:10% -10% -10% 10%;z-index:-1;background:radial-gradient(closest-side,rgba(217,178,94,.25),transparent);filter:blur(30px)}
+.quotes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,3vw,40px);margin-top:clamp(64px,9vw,120px)}
+.q{position:relative;padding-top:26px;border-top:1px solid var(--line)}
+.q::before{content:"";position:absolute;top:-1px;left:0;width:56px;height:1px;background:var(--gold)}
+.q p{margin:0;font:italic 400 clamp(1.15rem,1.6vw,1.45rem)/1.5 var(--serif);color:var(--ivory)}
+
+/* stats */
+.stats{padding:clamp(64px,9vw,120px) 0;border-block:1px solid var(--line);background:linear-gradient(180deg,#0C0907,#0A0807)}
+.stats-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr);gap:24px}
+.stat{display:grid;grid-template-rows:1.5em auto auto;gap:8px;align-content:start;padding-left:22px;border-left:1px solid var(--line)}
+.stat .lbl{font:500 .95rem/1.4 var(--sans);color:var(--muted)}
+.stat .num{display:block;overflow:hidden;line-height:1}
+.stat .num b{display:inline-block;white-space:nowrap;font:500 clamp(2.6rem,4.4vw,4.8rem)/1 var(--serif);letter-spacing:-.02em}
+.stat .sub{font:italic 400 1.25rem/1.3 var(--serif);color:var(--ivory)}
+
+/* vip */
+.vip{background:radial-gradient(50% 40% at 15% 40%,rgba(217,178,94,.07),transparent 70%),var(--black)}
+.vip-head{max-width:880px;margin-bottom:clamp(48px,7vw,90px)}
+.vip-head p{margin:1rem 0 0}
+.vip-grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(40px,7vw,110px);align-items:start}
+.vip-frame{position:sticky;top:110px;height:min(74vh,760px);overflow:hidden;border-radius:10px;box-shadow:0 0 0 1px var(--line-2),0 40px 90px -40px rgba(0,0,0,.9)}
+.vip-frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(10,8,7,.55),transparent 14%,transparent 86%,rgba(10,8,7,.7))}
+.vip-frame img{width:100%;will-change:transform}
+.vip-list{list-style:none;margin:0;padding:0;counter-reset:v}
+.vip-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;padding:28px 0;border-bottom:1px solid var(--line);transition:opacity .5s}
+.vip-item h3{margin:0;font:400 clamp(1.45rem,2.3vw,2.15rem)/1.15 var(--serif);transition:color .5s}
+.vip-item .role{display:block;margin-top:.35rem;font:600 .82rem/1.4 var(--sans);letter-spacing:.04em;color:var(--gold)}
+.vip-item p{margin:.55rem 0 0;color:var(--muted);max-width:56ch}
+.vip-links{display:flex;gap:10px}
+.vip-go{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;border:1px solid var(--line-2);color:var(--gold);text-decoration:none;transition:background .4s,color .4s,transform .5s var(--ease),border-color .4s}
+.vip-go:hover{background:var(--gold);color:var(--black);border-color:var(--gold);transform:scale(1.08)}
+.vip-go svg{width:18px;height:18px}
+.js .vip-item{opacity:.5}.js .vip-item.on{opacity:1}.js .vip-item.on h3{color:var(--gold-hi)}
+
+/* horizontal gallery */
+.hz{background:var(--black)}
+.hz-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px 48px;margin-bottom:clamp(36px,5vw,64px)}
+.hz-head p{margin:0;max-width:44ch}
+.hz-viewport{overflow:hidden}
+.hz-track{display:flex;gap:clamp(18px,2.4vw,34px);padding-inline:var(--gut);width:max-content}
+.shot{margin:0;width:clamp(300px,46vw,760px);flex:0 0 auto}
+.shot-img{position:relative;overflow:hidden;border-radius:8px;box-shadow:0 0 0 1px var(--line)}
+.shot-img img{width:100%;aspect-ratio:var(--ar);object-fit:cover;transition:transform 1.2s var(--ease),filter .8s}
+.shot:hover .shot-img img{transform:scale(1.05);filter:brightness(1.08)}
+.shot figcaption{display:flex;gap:14px;align-items:baseline;margin-top:16px;font:italic 400 clamp(1.1rem,1.5vw,1.4rem)/1.3 var(--serif)}
+.shot figcaption i{font:600 .78rem/1 var(--sans);font-style:normal;color:var(--gold);letter-spacing:.05em}
+.hz-foot{margin-top:clamp(40px,5vw,64px)}
+
+/* videos */
+.vids{background:radial-gradient(50% 40% at 80% 20%,rgba(217,178,94,.07),transparent 70%),#0B0908}
+.vids-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:clamp(36px,5vw,64px)}
+.vgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,1.8vw,24px)}
+.vcard{position:relative;display:block;text-decoration:none;border-radius:10px;overflow:hidden;background:var(--panel);box-shadow:0 0 0 1px var(--line);isolation:isolate}
+.vcard:first-child{grid-column:span 2;grid-row:span 2}
+.vcard img{width:100%;aspect-ratio:16/10;object-fit:cover;transition:transform 1.1s var(--ease),filter .8s;filter:saturate(.9) brightness(.82)}
+.vcard:first-child img{aspect-ratio:auto;height:100%;min-height:100%}
+.vcard:hover img{transform:scale(1.07);filter:saturate(1.05) brightness(.95)}
+.vcard::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 18%,rgba(8,6,5,.7) 52%,rgba(8,6,5,.96) 100%)}
+.vmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:clamp(14px,1.6vw,22px)}
+.vmeta b{display:block;font:400 clamp(1.05rem,1.4vw,1.3rem)/1.25 var(--serif)}
+.vcard:first-child .vmeta b{font-size:clamp(1.5rem,2.4vw,2.3rem)}
+.vmeta span{display:block;margin-top:6px;color:var(--muted);font-size:.88rem;line-height:1.45}
+.play{position:absolute;z-index:2;top:14px;right:14px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(10,8,7,.55);border:1px solid var(--line-2);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:transform .6s var(--ease),background .4s}
+.vcard:first-child .play{top:50%;left:50%;right:auto;width:84px;height:84px;translate:-50% -50%}
+.play svg{width:16px;height:16px;margin-left:3px;fill:var(--gold)}
+.vcard:hover .play{transform:scale(1.12);background:var(--gold)}
+.vcard:hover .play svg{fill:var(--black)}
+.vcard:first-child .play::before{content:"";position:absolute;inset:-10px;border-radius:50%;border:1px solid var(--gold);animation:pulse 2.4s var(--ease) infinite}
+@keyframes pulse{from{opacity:.8;transform:scale(.85)}to{opacity:0;transform:scale(1.35)}}
+
+/* testimonials */
+.tst{background:var(--black);overflow:hidden}
+.tst-wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);gap:clamp(40px,7vw,110px);align-items:start}
+.tst-stage{position:relative;min-height:clamp(360px,34vw,420px)}
+.slide{margin:0}
+.js .slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .9s var(--ease),visibility 0s .9s}
+.js .slide.on{opacity:1;visibility:visible;transition:opacity .9s var(--ease)}
+.slide blockquote{margin:0;position:relative}
+.slide blockquote::before{content:"";display:block;width:64px;height:48px;margin-bottom:22px;background:var(--metal);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 48'%3E%3Cpath d='M0 48V28C0 12 8 2 26 0l2 7C18 10 14 16 14 24h12v24zm36 0V28C36 12 44 2 62 0l2 7c-10 3-14 9-14 17h12v24z'/%3E%3C/svg%3E") no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 48'%3E%3Cpath d='M0 48V28C0 12 8 2 26 0l2 7C18 10 14 16 14 24h12v24zm36 0V28C36 12 44 2 62 0l2 7c-10 3-14 9-14 17h12v24z'/%3E%3C/svg%3E") no-repeat}
+.slide blockquote p{margin:0;font:italic 400 clamp(1.35rem,2.3vw,2.15rem)/1.42 var(--serif);color:var(--ivory)}
+.slide figcaption{margin-top:28px;display:grid;gap:4px}
+.slide figcaption b{font:600 1.05rem/1.3 var(--sans)}
+.slide figcaption span{color:var(--gold);font-size:.92rem}
+.tst-nav{display:flex;align-items:center;gap:14px;margin-top:36px}
+.tst-btn{width:52px;height:52px;border-radius:50%;border:1px solid var(--line-2);background:none;color:var(--gold);display:grid;place-items:center;cursor:pointer;transition:background .4s,color .4s}
+.tst-btn:hover{background:var(--gold);color:var(--black)}
+.tst-btn svg{width:18px;height:18px}
+.dots{display:flex;gap:8px;margin-left:10px}
+.dots button{width:28px;height:28px;padding:0;border:0;background:none;cursor:pointer;display:grid;place-items:center}
+.dots button::after{content:"";width:22px;height:2px;background:var(--line-2);transition:background .4s,width .4s}
+.dots button[aria-current="true"]::after{background:var(--gold);width:28px}
+html:not(.js) .tst-nav{display:none}
+
+/* book */
+.book{background:radial-gradient(45% 45% at 25% 50%,rgba(217,178,94,.1),transparent 70%),#0B0908;border-top:1px solid var(--line)}
+.book-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(40px,7vw,110px);align-items:center}
+.tilt{perspective:1100px}
+.tilt-card{transform-style:preserve-3d;transition:transform .7s var(--ease);border-radius:6px}
+.tilt-card img{border-radius:6px;box-shadow:0 50px 90px -30px rgba(0,0,0,.95),0 0 0 1px var(--line-2)}
+.sold{display:grid;margin:1.6rem 0 1.2rem}
+.sold .lbl{font:italic 400 1.4rem/1 var(--serif);color:var(--muted)}
+.sold .num{display:block;overflow:hidden}
+.sold .num b{display:inline-block;font:500 clamp(3.8rem,9vw,8.4rem)/1 var(--serif);letter-spacing:-.03em}
+.book-links{display:flex;flex-wrap:wrap;gap:14px;margin-top:1.6rem}
+.signing{margin:clamp(40px,6vw,72px) 0 0}
+.signing .ph{overflow:hidden;border-radius:8px;box-shadow:0 0 0 1px var(--line)}
+.signing figcaption{margin-top:14px;font:italic 400 1.15rem/1.4 var(--serif);color:var(--muted)}
+
+/* 7th sense */
+.seventh{overflow:hidden;background:radial-gradient(60% 70% at 70% 50%,rgba(60,40,110,.22),transparent 70%),#09070B;border-block:1px solid var(--line)}
+.seventh-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(40px,7vw,110px);align-items:center}
+.zener{position:absolute;inset:0;pointer-events:none;opacity:.5}
+.zener svg{position:absolute;width:clamp(60px,7vw,110px);height:auto;stroke:var(--gold);fill:none;stroke-width:2;opacity:.35;animation:drift 18s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate(0,0) rotate(0)}to{transform:translate(30px,-40px) rotate(30deg)}}
+.seventh .ask{margin:0;font:500 1rem/1.4 var(--sans);color:var(--muted)}
+.seventh .brandnew{margin:.4rem 0 0;font:600 .95rem/1.4 var(--sans);letter-spacing:.06em;color:var(--gold)}
+.seventh .h2{margin-top:.6rem;font-size:clamp(3rem,7.4vw,7rem)}
+.seventh ul{list-style:none;margin:1.6rem 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.seventh li{border:1px solid var(--line-2);border-radius:999px;padding:8px 16px;font-size:.92rem}
+.usa{position:relative}
+.usa img{border-radius:8px;box-shadow:0 40px 90px -40px rgba(0,0,0,.95),0 0 0 1px var(--line-2)}
+.usa figcaption{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;font:italic 400 1.2rem/1.3 var(--serif);color:var(--muted)}
+
+/* contact */
+.contact{text-align:center;overflow:hidden;background:var(--black)}
+.contact::before{content:"";position:absolute;inset:0;background:radial-gradient(600px circle at var(--mx,50%) var(--my,40%),rgba(255,226,160,.13),transparent 60%);pointer-events:none;transition:background .2s}
+.contact .h2{font-size:clamp(2.6rem,7vw,6.6rem);max-width:15ch;margin-inline:auto}
+.contact .lead{max-width:40ch;margin:1.4rem auto 0;color:var(--muted)}
+.phone{display:inline-block;margin-top:clamp(28px,4vw,48px);font:500 clamp(2.2rem,5.4vw,4.6rem)/1 var(--serif);text-decoration:none;letter-spacing:-.01em}
+.mail{display:block;width:max-content;max-width:100%;margin:18px auto 0;font:500 clamp(1.05rem,1.6vw,1.35rem)/1.4 var(--sans);color:var(--ivory);text-decoration:none;border-bottom:1px solid var(--line-2);padding-bottom:4px;overflow-wrap:anywhere}
+.mail:hover{border-color:var(--gold);color:var(--gold-hi)}
+.contact .ctas{justify-content:center;margin-top:clamp(32px,4vw,48px)}
+
+/* footer */
+.ftr{border-top:1px solid var(--line);padding:56px 0 calc(40px + env(safe-area-inset-bottom));background:#080605}
+.ftr-grid{display:grid;grid-template-columns:minmax(0,1.2fr) repeat(2,minmax(0,1fr));gap:40px;align-items:start}
+.ftr img{width:220px}
+.ftr p{margin:14px 0 0;color:var(--dim);font-size:.9rem}
+.ftr h3{margin:0 0 14px;font:600 .85rem/1.3 var(--sans);color:var(--gold);letter-spacing:.04em}
+.ftr ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ftr a{display:inline-flex;align-items:center;min-height:36px;text-decoration:none;color:var(--muted);transition:color .3s}
+.ftr ul{gap:2px}
+.ftr a:hover{color:var(--ivory)}
+
+/* lightbox */
+.lb{width:min(92vw,1100px);padding:0;border:0;background:transparent;color:var(--ivory)}
+.lb::backdrop{background:rgba(5,4,3,.88);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.lb-frame{position:relative;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px var(--line-2)}
+.lb-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.lb-close{display:block;margin:0 0 12px auto;background:none;border:1px solid var(--line-2);color:var(--ivory);font:600 .9rem var(--sans);border-radius:999px;height:42px;padding:0 20px;cursor:pointer}
+
+/* mobile menu */
+.menu{position:fixed;inset:0;z-index:120;background:#080605;isolation:isolate;display:flex;flex-direction:column;padding:22px var(--gut) 32px;overflow-y:auto}
+.menu[hidden]{display:none}
+.menu-top{display:flex;justify-content:flex-end}
+.menu nav{display:grid;gap:6px;margin-top:6vh}
+.menu nav a{font:400 clamp(2rem,9vw,3rem)/1.2 var(--serif);text-decoration:none;color:var(--ivory)}
+.menu .btn{margin-top:auto;align-self:flex-start}
+.dock{display:none}
+
+/* cursor */
+.cursor,.cursor-ring{position:fixed;left:0;top:0;z-index:300;pointer-events:none;border-radius:50%;translate:-50% -50%;opacity:0;transition:opacity .4s}
+.cursor-on .cursor,.cursor-on .cursor-ring{opacity:1}
+.cursor{width:6px;height:6px;background:var(--gold)}
+.cursor-ring{width:38px;height:38px;border:1px solid rgba(217,178,94,.6);transition:width .35s var(--ease),height .35s var(--ease),background .35s,border-color .35s}
+.cursor-ring.big{width:74px;height:74px;background:rgba(217,178,94,.1);border-color:var(--gold)}
+
+/* responsive */
+@media (max-width:1100px){
+  .nav{display:none}.hdr .btn{display:none}.menu-btn{display:inline-flex;align-items:center}
+  .vgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:900px){
+  .show-grid,.book-grid,.seventh-grid,.tst-wrap,.vip-grid{grid-template-columns:minmax(0,1fr)}
+  .quotes{grid-template-columns:minmax(0,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px}
+  .vip-frame{position:relative;top:0;height:auto;max-height:70vh;overflow-y:auto;max-width:440px}
+  .vip-frame img{transform:none!important}
+  .hz-viewport{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:10px}
+  .shot{scroll-snap-align:center;width:min(84vw,560px)}
+  .ftr-grid{grid-template-columns:minmax(0,1fr)}
+  .dock{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:70;padding:10px var(--gut) calc(10px + env(safe-area-inset-bottom));background:rgba(10,8,7,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+  .dock .btn{width:100%}
+  .dock{transition:transform .5s var(--ease)}
+  .dock.hide{transform:translateY(110%)}
+  body{padding-bottom:76px}
+}
+@media (max-width:620px){
+  .hero-media{height:440px}
+  .hero-media img{object-position:46% 0;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 26%,transparent 50%);mask-image:linear-gradient(to bottom,#000 0%,#000 26%,transparent 50%)}
+  .hero-inner{padding-top:300px;padding-bottom:84px}
+  .seal{top:250px;bottom:auto;right:var(--gut);width:96px}
+  .vgrid{grid-template-columns:minmax(0,1fr)}
+  .vcard:first-child{grid-column:auto;grid-row:auto}
+  .vcard:first-child img{aspect-ratio:16/10;height:auto}
+  .vcard:first-child .play{top:14px;right:14px;left:auto;width:52px;height:52px;translate:none}
+  .stats-grid{grid-template-columns:minmax(0,1fr)}
+  .tst-stage{min-height:520px}
+  .ctas .btn{width:100%}
+  .phone{font-size:2.1rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .grain,.beams,.dust{display:none}
+  .js .vip-item{opacity:1}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="loader" aria-hidden="true"><div class="loader-inner"><img src="assets/img/img052.png" width="811" height="108" alt=""><span class="loader-line"></span></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Deepak RAO’s Extra Sensory Perception">
+      <small>Deepak RAO’s</small>
+      <img src="assets/img/img052.png" width="811" height="108" alt="Extra Sensory Perception">
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#show">What’s it about</a>
+      <a href="#clients">Corporate Clientele</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#videos">Videos</a>
+      <a href="https://www.deepakrao-esp.com/profile.htm">Profile</a>
+      <a href="#book">ESP Book</a>
+    </nav>
+    <a class="btn btn-gold magnetic" href="tel:+919820684840"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Call : ( +91 ) 98206 84840</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+  </div>
+</header>
+
+<div class="menu" id="menu" hidden>
+  <div class="menu-top"><button class="menu-btn menu-close" type="button" style="display:inline-flex;align-items:center">Close</button></div>
+  <nav aria-label="Main">
+    <a href="#show">What’s it about</a>
+    <a href="#clients">Corporate Clientele</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#videos">Videos</a>
+    <a href="https://www.deepakrao-esp.com/profile.htm">Profile</a>
+    <a href="#book">ESP Book</a>
+    <a href="#contact">Please connect with us DIRECTLY....</a>
+  </nav>
+  <a class="btn btn-gold" href="tel:+919820684840">Call : ( +91 ) 98206 84840</a>
+</div>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-media"><img src="assets/img/img071.jpg" width="1378" height="884" alt="Deepak Rao on stage, seen from behind, facing a packed ballroom under stage lights" fetchpriority="high"></div>
+  <div class="beams" aria-hidden="true"><i></i><i></i><i></i></div>
+  <canvas class="dust" aria-hidden="true"></canvas>
+  <div class="hero-inner wrap">
+    <p class="moniker" data-hero>ESP Man</p>
+    <h1 class="title" data-title>Deepak RAO</h1>
+    <p class="claim gold" data-hero>Over 500 Corporates</p>
+    <p class="pitch" data-hero>Book this Amazing ‘ ESP ’ &amp; Mind Show... Repeatedly - in 35 Key Countries, spanning Asia, Far East, Middle East, Africa, Czech, UK, Europe, Canada &amp; America !</p>
+    <div class="ctas" data-hero>
+      <a class="btn btn-gold magnetic" href="tel:+919820684840"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Call : ( +91 ) 98206 84840</a>
+      <a class="btn btn-ghost magnetic" href="#clients">Check-out Clientele Photos</a>
+    </div>
+  </div>
+  <img class="seal" data-seal src="assets/img/img056.png" width="312" height="312" alt="Asia’s Only">
+  <div class="cue" aria-hidden="true"></div>
+</section>
+
+<!-- CLIENT NAMES -->
+<div class="mq" aria-hidden="true">
+  <div class="mq-row"><div class="mq-track" style="--dur:190s"><span>AAPI</span><span>AIMRA</span><span>Airtel Telemedia</span><span>American Express</span><span>Arch Pharma Labs</span><span>Asia Business Council Forum</span><span>ASK Raymond James Securities</span><span>Automation Grand CEO Summit - 2014</span><span>B. Vijaykumar</span><span>Bharat Petroleum</span><span>Birla Sun Life</span><span>Bombay Gymkhana - Fort</span><span>Britannia</span><span>Bunts Sangha Mumbai</span><span>Canara Bank</span><span>Centrum Capital</span><span>Charak Pharma</span><span>Citibank</span><span>Computer Associates</span><span>Dainik Bhaskar</span><span>Delta Airlines</span><span>Drivol</span><span>Emirates</span><span>Essence 2008</span><span>Fieldbus Foundation 2011</span><span>Fund Tech. India</span><span>General Electric Company</span><span>Global Congress of Spiritual Scientists</span><span>Godrej Industries</span><span>Gujarati Association of Singapore</span><span>HDFC Mutual Fund</span><span>Hewlett Packard</span><span>HSBC Asset Management</span><span>I I M Bangalore - Delhi Chapter</span><span>ICICI Lombard</span><span>Image Mngmnt Professionals' Assoc.</span><span>Indian Medical Asso. - National Conf. '09</span><span>Indu Group</span><span>Institute of Mgmt. Consultants of India</span><span>iViZ Security</span><span>J.K. Cement</span><span>Kellogg's</span><span>Konkani Assoc. of CA</span><span>Kwality Wall's</span><span>Law &amp; Kenneth</span><span>Lilac Medicare</span><span>LOWE Advertising</span><span>Marathon Group</span><span>McDonalds India</span><span>Menlo Worldwide</span><span>Mondelez International</span><span>Murugappa Group : South India</span><span>Navteq Global - Genesys</span><span>NMIMS</span><span>Onward Novell</span><span>Parryware</span><span>Piramal Critical Care</span><span>Prashasan Academy</span><span>Raheja Corporation</span><span>Red FM Radio 93.5</span><span>Reliance Digital</span><span>Rio Tinto Diamonds</span><span>Rotary Foundation for Charity</span><span>RVG Conclave</span><span>Samuel Sekuritas</span><span>Savex Technologies</span><span>Seagate</span><span>Shoppers Stop</span><span>SMC - Sanlam Investments</span><span>Somaiya - Kitab Khana</span><span>South Mumbai Mahila Samiti</span><span>Stan Chart Mutual Funds</span><span>Tata Communications</span><span>TCPL Packaging</span><span>Transwarranty</span><span>Unitech - Nohmi</span><span>Vector Projects</span><span>Vodafone Mobile Services</span><span>Welingkar Institute of Management</span><span>YEO - Young Entrepreneurs Organisation</span><span>Zydus Lanka</span><span>AAPI</span><span>AIMRA</span><span>Airtel Telemedia</span><span>American Express</span><span>Arch Pharma Labs</span><span>Asia Business Council Forum</span><span>ASK Raymond James Securities</span><span>Automation Grand CEO Summit - 2014</span><span>B. Vijaykumar</span><span>Bharat Petroleum</span><span>Birla Sun Life</span><span>Bombay Gymkhana - Fort</span><span>Britannia</span><span>Bunts Sangha Mumbai</span><span>Canara Bank</span><span>Centrum Capital</span><span>Charak Pharma</span><span>Citibank</span><span>Computer Associates</span><span>Dainik Bhaskar</span><span>Delta Airlines</span><span>Drivol</span><span>Emirates</span><span>Essence 2008</span><span>Fieldbus Foundation 2011</span><span>Fund Tech. India</span><span>General Electric Company</span><span>Global Congress of Spiritual Scientists</span><span>Godrej Industries</span><span>Gujarati Association of Singapore</span><span>HDFC Mutual Fund</span><span>Hewlett Packard</span><span>HSBC Asset Management</span><span>I I M Bangalore - Delhi Chapter</span><span>ICICI Lombard</span><span>Image Mngmnt Professionals' Assoc.</span><span>Indian Medical Asso. - National Conf. '09</span><span>Indu Group</span><span>Institute of Mgmt. Consultants of India</span><span>iViZ Security</span><span>J.K. Cement</span><span>Kellogg's</span><span>Konkani Assoc. of CA</span><span>Kwality Wall's</span><span>Law &amp; Kenneth</span><span>Lilac Medicare</span><span>LOWE Advertising</span><span>Marathon Group</span><span>McDonalds India</span><span>Menlo Worldwide</span><span>Mondelez International</span><span>Murugappa Group : South India</span><span>Navteq Global - Genesys</span><span>NMIMS</span><span>Onward Novell</span><span>Parryware</span><span>Piramal Critical Care</span><span>Prashasan Academy</span><span>Raheja Corporation</span><span>Red FM Radio 93.5</span><span>Reliance Digital</span><span>Rio Tinto Diamonds</span><span>Rotary Foundation for Charity</span><span>RVG Conclave</span><span>Samuel Sekuritas</span><span>Savex Technologies</span><span>Seagate</span><span>Shoppers Stop</span><span>SMC - Sanlam Investments</span><span>Somaiya - Kitab Khana</span><span>South Mumbai Mahila Samiti</span><span>Stan Chart Mutual Funds</span><span>Tata Communications</span><span>TCPL Packaging</span><span>Transwarranty</span><span>Unitech - Nohmi</span><span>Vector Projects</span><span>Vodafone Mobile Services</span><span>Welingkar Institute of Management</span><span>YEO - Young Entrepreneurs Organisation</span><span>Zydus Lanka</span></div></div>
+  <div class="mq-row rev"><div class="mq-track" style="--dur:210s"><span>ACE Derivatives &amp; Commodity Exchange</span><span>Airtel Broadband</span><span>Allergan</span><span>Apna Pariwar Global</span><span>Ashok Leyland</span><span>Asian CERC</span><span>Atlas Copco</span><span>Aventis Pharma</span><span>Beckman Coulter</span><span>Bharti Teletech - Beetel</span><span>BMC Software</span><span>Bombay Stock Exchange</span><span>British Petroleum</span><span>Cable &amp; Wireless India</span><span>Castrol</span><span>Century Ply</span><span>Choksey Family Event</span><span>Colgate Palmolive</span><span>Crisil</span><span>Deepak Fertilizers</span><span>Diabetic Foundation ‘ Pankh ’</span><span>Ebix ADAM Global</span><span>Entrepreneurs Organisation - EO</span><span>FICCI FLO</span><span>Forever Living Products</span><span>Garware-Wall Ropes</span><span>Girish Choksey</span><span>Glodyne Technoserve</span><span>Grand Seasons</span><span>HCL</span><span>Heart Foundation ‘ Heal ’</span><span>Hindustan Unilever</span><span>HSBC Premier</span><span>ICI Paints</span><span>IDFC Mutual Fund</span><span>India Infoline</span><span>Indigo Paints</span><span>ING Vysya Mutual Fund</span><span>Intl. Knowledge Millennium Conference</span><span>JCB India</span><span>Justdial</span><span>Khoja Trust</span><span>Kuoni India</span><span>L'Oréal</span><span>Life Insurance - Study Circle</span><span>Lions Clubs</span><span>Mahindra Automotive</span><span>Max Life Insurance</span><span>MDRT Zone - 4</span><span>Microsoft</span><span>MSPL</span><span>Narsee Monjee - Umang Fest.</span><span>Nicholas Piramal</span><span>Novartis Oncology</span><span>Owens Corning</span><span>Pidilite Industries</span><span>Powai Techfest - CEO Conclave</span><span>Price Water House Coopers</span><span>Rashi Peripherals</span><span>Regional Rural Banks</span><span>Reliance Nippon Life Asset Management</span><span>ROTAL</span><span>RPG Group</span><span>Saint Gobain</span><span>Sarvodaya Trust</span><span>School of Ancient Wisdom</span><span>Service Tax Zone - Mumbai</span><span>Sigma Byte</span><span>Société Générale Bank</span><span>Sophos India</span><span>Stallion Group</span><span>Taj Group</span><span>Tata Motors</span><span>Times of India</span><span>Tupperware</span><span>UTI Asset Management</span><span>VISA Consolidated Support Services</span><span>Wartsila Diesel</span><span>Wockhardt Hospitals</span><span>YPO - Young Presidents Organisation</span><span>ACE Derivatives &amp; Commodity Exchange</span><span>Airtel Broadband</span><span>Allergan</span><span>Apna Pariwar Global</span><span>Ashok Leyland</span><span>Asian CERC</span><span>Atlas Copco</span><span>Aventis Pharma</span><span>Beckman Coulter</span><span>Bharti Teletech - Beetel</span><span>BMC Software</span><span>Bombay Stock Exchange</span><span>British Petroleum</span><span>Cable &amp; Wireless India</span><span>Castrol</span><span>Century Ply</span><span>Choksey Family Event</span><span>Colgate Palmolive</span><span>Crisil</span><span>Deepak Fertilizers</span><span>Diabetic Foundation ‘ Pankh ’</span><span>Ebix ADAM Global</span><span>Entrepreneurs Organisation - EO</span><span>FICCI FLO</span><span>Forever Living Products</span><span>Garware-Wall Ropes</span><span>Girish Choksey</span><span>Glodyne Technoserve</span><span>Grand Seasons</span><span>HCL</span><span>Heart Foundation ‘ Heal ’</span><span>Hindustan Unilever</span><span>HSBC Premier</span><span>ICI Paints</span><span>IDFC Mutual Fund</span><span>India Infoline</span><span>Indigo Paints</span><span>ING Vysya Mutual Fund</span><span>Intl. Knowledge Millennium Conference</span><span>JCB India</span><span>Justdial</span><span>Khoja Trust</span><span>Kuoni India</span><span>L'Oréal</span><span>Life Insurance - Study Circle</span><span>Lions Clubs</span><span>Mahindra Automotive</span><span>Max Life Insurance</span><span>MDRT Zone - 4</span><span>Microsoft</span><span>MSPL</span><span>Narsee Monjee - Umang Fest.</span><span>Nicholas Piramal</span><span>Novartis Oncology</span><span>Owens Corning</span><span>Pidilite Industries</span><span>Powai Techfest - CEO Conclave</span><span>Price Water House Coopers</span><span>Rashi Peripherals</span><span>Regional Rural Banks</span><span>Reliance Nippon Life Asset Management</span><span>ROTAL</span><span>RPG Group</span><span>Saint Gobain</span><span>Sarvodaya Trust</span><span>School of Ancient Wisdom</span><span>Service Tax Zone - Mumbai</span><span>Sigma Byte</span><span>Société Générale Bank</span><span>Sophos India</span><span>Stallion Group</span><span>Taj Group</span><span>Tata Motors</span><span>Times of India</span><span>Tupperware</span><span>UTI Asset Management</span><span>VISA Consolidated Support Services</span><span>Wartsila Diesel</span><span>Wockhardt Hospitals</span><span>YPO - Young Presidents Organisation</span></div></div>
+</div>
+
+<!-- THE SHOW -->
+<section class="sec show" id="show">
+  <div class="wrap">
+    <div class="show-grid">
+      <div class="show-copy">
+        <h2 class="h2 gold split" data-split>Extra Sensory Perception</h2>
+        <p class="lead" data-reveal>60 mins. Mystical &amp; Enjoyable</p>
+        <p data-reveal>2 - Man High Octane Mind-blowing Show.... with Total Audience Participation ON STAGE !</p>
+        <p data-reveal>Engaging &amp; Riveting - Lifetime Experience with a Motivational Impact !!</p>
+        <span class="rule" data-rule></span>
+        <p class="muted" data-reveal>Applauded as the 'Single Most Classy Form of Interactive, Edu-taining Sessions' presented at the highest levels of Corporate India &amp; Asia !</p>
+      </div>
+      <div class="poster" data-reveal>
+        <div class="poster-glow" aria-hidden="true"></div>
+        <div class="poster-card tilt-card" data-tilt><img src="assets/img/img058.jpg" width="1351" height="891" loading="lazy" alt="Deepak RAO’s ESP Mind Show on stage: Deepak at left and his blindfolded partner at right, before a seated audience"></div>
+      </div>
+    </div>
+    <div class="quotes">
+      <div class="q" data-reveal><p>PLEASE NOTE : Its NOT a Comedy Show, but the audience is 'Constantly Laughing' with Amazement and Spot Situational Humour !</p></div>
+      <div class="q" data-reveal><p>Participants are ' Never Embarrassed or Discomforted '. Infact, it is a Positive 'Experience of a Lifetime' !!</p></div>
+      <div class="q" data-reveal><p>Excitement to Participate. Standing Ovations - A routine feature !</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats" aria-label="Over 500 Corporates">
+  <div class="wrap stats-grid">
+    <div class="stat"><span class="lbl">Over</span><span class="num"><b class="gold" data-num>500</b></span><span class="sub">Corporates</span></div>
+    <div class="stat"><span class="lbl" aria-hidden="true"></span><span class="num"><b class="gold" data-num>35</b></span><span class="sub">Key Countries</span></div>
+    <div class="stat"><span class="lbl">Sold Over</span><span class="num"><b class="gold" data-num>1,00,000</b></span><span class="sub" aria-hidden="true"></span></div>
+    <div class="stat"><span class="lbl">Over</span><span class="num"><b class="gold" data-num>8000</b></span><span class="sub">Photos / Videos</span></div>
+  </div>
+</section>
+
+<!-- VIP -->
+<section class="sec vip" id="vip">
+  <div class="wrap">
+    <div class="vip-head">
+      <h2 class="h2 split" data-split>Presented at the Highest Levels of <em class="gold">Corporate India !!</em></h2>
+      <p class="muted" data-reveal>( Click Photos to view Event Videos )</p>
+    </div>
+    <div class="vip-grid">
+      <div class="vip-frame" data-vipframe><img src="assets/img/img057.png" width="830" height="4564" loading="lazy" alt="Poster of photographs of Deepak Rao with senior leaders who hosted his ESP Show"></div>
+      <ol class="vip-list">
+        <li class="vip-item"><div><h3>RBI Governor Shaktikanta Das</h3><p>hosts Deepak RAO’s ESP Show for RBI Top Management Conference</p></div><div class="vip-links"><a class="vip-go" data-yt href="https://youtube.com/shorts/DuVYjM3TVG8?si=bv3YRNbS2dfRUUoS" aria-label="RBI Governor hosts Deepak RAO's ESP Show"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a><a class="vip-go" data-yt href="https://youtu.be/iqzHkly5wL0" aria-label="RBI Governor hosts Deepak RAO's ESP Show"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Challa Sreenivasulu Setty</h3><span class="role">State Bank of India Chairman</span><p>felicitates Deepak RAO after his ESP Show for SBI Chairman’s Club.</p></div><div class="vip-links"><a class="vip-go" data-yt href="https://youtu.be/4Gvtt9AiB7U" aria-label="SBI Chairman invites Deepak RAO"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Ajay Piramal</h3><p>hosts Deepak RAO’s ESP Show and introduces him to the Piramal Board of Directors.</p></div><div class="vip-links"><a class="vip-go" href="https://www.youtube.com/watch?v=QW7oDQ9h970" target="_blank" rel="noopener" aria-label="Ajay Piramal introduces Deepak RAO"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Narayana Murthy</h3><p>invites ESP Man Deepak RAO to the Asia Business Council Meet</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-asia-business-councilforum.blogspot.com/" target="_blank" rel="noopener" aria-label="Narayan Murthy invites Deepak RAO"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>The Groom - Rishi Sunak</h3><p>Future PM of UK participates with Akshata Murthy ( Pre-wedding get-together, hosted by Narayan Murthy ).</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-narayana-murthy-pvt-event.blogspot.com/" target="_blank" rel="noopener" aria-label="Rishi Sunak &amp; Akshata Murthy participate in the ESP Show"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Harsh Goenka</h3><span class="role">Chairman - RPG Group</span><p>hosts the ESP Show while participating actively on stage.</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-choksey-family-event.blogspot.com/" target="_blank" rel="noopener" aria-label="Harsh Goenka participates at the Choksey Family Event (Choksey Chemicals)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>HH Sheikh Saud Bin Saqr Al Qasimi</h3><span class="role">King of Ras Al Khaimah - ( 3rd largest UAE Emirate )</span><p>invites Deepak RAO to his palace after experiencing the ESP Show.</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-rak-hospital3.blogspot.com/" target="_blank" rel="noopener" aria-label="Ras Al Khaimah King - 3rd largest UAE Emirate, HH Sheikh Saud Bin Saqr Al Qasimi invites Deepak RAO"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Anshuman Ruia</h3><p>books the ‘ESP &amp; Mind’ Show, for a special private get-together</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-ruias1.blogspot.com/" target="_blank" rel="noopener" aria-label="Anshuman Ruia invites Deepak RAO"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Shekhar Bajaj</h3><span class="role">Chairman - Bajaj Electricals</span><p>invites....</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-bajaj-electricals.blogspot.com/" target="_blank" rel="noopener" aria-label="Shekhar Bajaj participates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Naresh Goyal</h3><p>invites Deepak RAO to the Jet Airways Global Station Manager’s Conference</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-jet-airways.blogspot.com/" target="_blank" rel="noopener" aria-label="Naresh Goyal hosts Deepak RAO -  Jet Airways World-wide Station Manager’s Conference at Hotel Renaissance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Jamshyd Godrej</h3><p>participates in the ESP Show</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-asia-business-councilforum.blogspot.com/" target="_blank" rel="noopener" aria-label="Jamshyd Godrej actively participates in the ESP Show"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Chef Sanjeev Kapoor</h3><p>hosts ESP Man Deepak RAO</p></div><div class="vip-links"><a class="vip-go" data-yt href="https://youtu.be/t_kcDtOxAH8" aria-label="Chef Sanjeev Kapoor hosts ESP Man Deepak RAO"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Farah Khan, Jagmohan Mundra, Deepak Rao &amp; Nari Hira</h3><p>at the ESP Book Launch Published by Magna</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-2nd-book-launch.blogspot.com/" target="_blank" rel="noopener" aria-label="2nd launch of Deepak RAO’s book - ‘Unlock Your ESP Potential"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTELE WITH EVENT PHOTOS: horizontal -->
+<section class="sec hz" id="clients">
+  <div class="wrap hz-head">
+    <h2 class="h2 split" data-split>Unbelievable Body of <em class="gold">Work !</em></h2>
+    <p class="muted" data-reveal>Over 8000 Photos / Videos visible on our Exhaustive Client list Alphabetical Order</p>
+  </div>
+  <div class="hz-pin" data-hzpin>
+    <div class="hz-viewport">
+      <div class="hz-track" data-hztrack>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img063.jpg" width="1299" height="733" style="--ar:1299/733" loading="lazy" alt="Deepak Rao on stage before a packed auditorium with a full balcony"></div><figcaption><i>01</i>JIO ( Mumbai )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img061.jpg" width="1299" height="745" style="--ar:1299/745" loading="lazy" alt="A banquet-hall audience laughing heartily during the show"></div><figcaption><i>02</i>Hiperdist Gulf ( 2014 )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img062.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Employees in matching track jackets laughing and clapping"></div><figcaption><i>03</i>Glenmark Pharma.</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img067.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="A participant bows deeply to Deepak Rao on stage"></div><figcaption><i>04</i>Standard Chartered Bank ( Chennai )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img065.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Executives on a red-carpet stage watch a demonstration"></div><figcaption><i>05</i>Motilal Oswal Securities ( Mumbai )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img066.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Rows of audience members all pointing forward together"></div><figcaption><i>06</i>Bharti Teletech Beetel ( Delhi )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img070.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Guests in suits standing and applauding in a banquet hall"></div><figcaption><i>07</i>Western Union Money Transfer ( Cochin )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img069.jpg" width="1299" height="518" style="--ar:1299/518" loading="lazy" alt="A long row of executives standing and applauding"></div><figcaption><i>08</i>Canara Bank - Chairman ( Bangalore )</figcaption></figure>
+      </div>
+    </div>
+  </div>
+  <div class="wrap hz-foot"><a class="btn btn-ghost magnetic" href="https://www.deepakrao-esp.com/photographs.htm">Check-out Clientele Photos</a></div>
+</section>
+
+<!-- VIDEOS -->
+<section class="sec vids" id="videos">
+  <div class="wrap">
+    <div class="vids-head">
+      <h2 class="h2 split" data-split>Informative <em class="gold">Videos</em></h2>
+      <a class="btn btn-ghost magnetic" href="https://www.deepakrao-esp.com/videos.htm">VIDEOS</a>
+    </div>
+    <div class="vgrid">
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=XDVnIZUHPKo"><img src="https://i.ytimg.com/vi/XDVnIZUHPKo/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Tata Motors Event - Ends with a Standing Ovation !"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Tata Motors</b><span>ESP Show ends with a Standing Ovation !!</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=6CpfebQxhxY"><img src="https://i.ytimg.com/vi/6CpfebQxhxY/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Excitement, Shock &amp; Awe at Raymond - Senior Management Conference"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Excitement, Shock &amp; Awe !! Raymond Sr. Management Conf.</b><span>Delegates Express Joy</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=dGsL0Ah8Ffw"><img src="https://i.ytimg.com/vi/dGsL0Ah8Ffw/hqdefault.jpg" width="480" height="360" loading="lazy" alt="RPG Group Chairman - Mr. Harsh Goenka, participates actively on stage with Deepak Rao"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Harsh Goenka ( RPG Chief )</b><span>participates with Deepak Rao</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=RMxZnpLapog"><img src="https://i.ytimg.com/vi/RMxZnpLapog/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Mandira Bedi Bowled Over at the Colgate National Conference"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Colgate National Conference</b><span>Mandira Bedi Bowled Over</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=gWCqO-qwkMw"><img src="https://i.ytimg.com/vi/gWCqO-qwkMw/hqdefault.jpg" width="480" height="360" loading="lazy" alt="DIGI Telecom - Malaysia, invites Mastermind Deepak RAO for a 3 City Event"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>DIGI Telecom - Malaysia</b><span>invites the Mastermind to Johar Bahru, Penang and Kuala Lampur</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=XbJd6hkGon4"><img src="https://i.ytimg.com/vi/XbJd6hkGon4/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Deepak Rao&#x27;s ESP Show - Nicholas Piramal, CLICK to see European Customers Response - Madrid, Spain !"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Nicholas Piramal European Customers Meet</b><span>Madrid, Spain</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=gZbNKUERnHI"><img src="https://i.ytimg.com/vi/gZbNKUERnHI/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Deepak Rao demonstrates Mind Over Matter"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Deepak Rao demonstrates Mind Over Matter</b></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=_jyIbbnyRQ4"><img src="https://i.ytimg.com/vi/_jyIbbnyRQ4/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Deepak Rao&#x27;s &#x27;1 hour Star News Exclusive&#x27; Interview"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Star News Exclusive Research &amp; Coverage</b><span>The Mind is Limitless</span></span></a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="sec tst" id="testimonials">
+  <div class="wrap tst-wrap">
+    <div>
+      <h2 class="h2 split" data-split>Testimonials of Corporate <em class="gold">Honchos</em></h2>
+    </div>
+    <div>
+      <div class="tst-stage" data-slider>
+        <figure class="slide"><blockquote><p>The show was absolutely out of this world ! Had not seen anything like this before...... It was amazing to see Deepak actually read people's minds ! It's a simply scintillating show..... I give him full marks - 10 on 10.</p></blockquote><figcaption><b>Sudhir Sohoni</b><span>VP - Ceat</span></figcaption></figure>
+        <figure class="slide"><blockquote><p>Cannot imagine, how he does it. Seeing is believing !</p></blockquote><figcaption><b>Purshottam Baliga</b><span>President - Jet Airways</span></figcaption></figure>
+        <figure class="slide"><blockquote><p>Have experienced Deepak Rao's show before... this is the 2nd time I am seeing him and cannot tell you how amazed I am.... I am at a loss of words.... and don't know what to say... No doubt, that I speak on behalf of everyone out here.... that It's been a fascinating evening.</p></blockquote><figcaption><b>Nitin Paranjpe</b><span>CEO India - Unilever</span></figcaption></figure>
+        <figure class="slide"><blockquote><p>There are only a few people in the world today, who have the gift of Extra Sensory Perception. The exciting show speaks for itself !</p></blockquote><figcaption><b>Sorab Mistry</b><span>( Exec. Director - Asia Pacific ) - McCann Erickson</span></figcaption></figure>
+        <figure class="slide"><blockquote><p>Some of us have had the privilege of listening to Mr. Deepak Rao, and seeing his performance at different occasions.... and I can tell you.... it's a very very mind boggling kind of experience, to say the least.... in which you will also participate.</p></blockquote><figcaption><b>Vikas Shirodkar</b><span>VP HRD - Johnson &amp; Johnson</span></figcaption></figure>
+        <figure class="slide"><blockquote><p>We had invited Deepak Rao for a Group Conference for RPG. It was a fantastic experience.... and a show, that was simply wonderful ! I don't think, people had experienced, such a feeling before ! Something so mystical about this man, who I see, as one of the best presenters, that we have in Corporate India today.</p></blockquote><figcaption><b>Manoj Chandra</b><span>Head Corp. Comm. - RPG</span></figcaption></figure>
+      </div>
+      <div class="tst-nav">
+        <button class="tst-btn" type="button" data-prev aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button class="tst-btn" type="button" data-next aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        <div class="dots" data-dots></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOK -->
+<section class="sec book" id="book">
+  <div class="wrap">
+    <div class="book-grid">
+      <div class="tilt" data-reveal><div class="tilt-card" data-tilt><img src="assets/img/img051.jpg" width="600" height="745" loading="lazy" alt="Magna Books advertisement for Deepak Rao’s book on Extra Sensory Perception"></div></div>
+      <div>
+        <h2 class="h2 split" data-split>Unlock Your <em class="gold">ESP Potential</em></h2>
+        <div class="sold"><span class="lbl">Sold Over</span><span class="num"><b class="gold" data-num>1,00,000</b></span></div>
+        <div class="book-links" data-reveal>
+          <a class="btn btn-gold magnetic" href="https://www.deepakrao-esp.com/espbook.htm">Deepak RAO's ESP Book - 7th Edition OUT</a>
+          <a class="btn btn-ghost magnetic" href="https://www.deepakrao-esp.com/videos.htm">Click : See Book Launches</a>
+        </div>
+      </div>
+    </div>
+    <figure class="signing" data-reveal><div class="ph"><img src="assets/img/img068.jpg" width="1299" height="787" loading="lazy" alt="Deepak Rao autographing copies of his book for a crowd of guests"></div><figcaption>Excited audience getting their copy of the ESP Book - Autographed</figcaption></figure>
+  </div>
+</section>
+
+<!-- THE 7TH SENSE -->
+<section class="sec seventh" aria-label="The 7th Sense">
+  <div class="zener" aria-hidden="true">
+    <svg viewBox="0 0 100 100" style="left:6%;top:14%"><circle cx="50" cy="50" r="38"/></svg>
+    <svg viewBox="0 0 100 100" style="left:44%;top:8%;animation-delay:-4s"><path d="M50 12v76M12 50h76"/></svg>
+    <svg viewBox="0 0 100 100" style="left:12%;bottom:12%;animation-delay:-8s"><path d="M10 35q10-12 20 0t20 0 20 0 20 0M10 55q10-12 20 0t20 0 20 0 20 0M10 75q10-12 20 0t20 0 20 0 20 0"/></svg>
+    <svg viewBox="0 0 100 100" style="right:8%;top:20%;animation-delay:-2s"><rect x="16" y="16" width="68" height="68"/></svg>
+    <svg viewBox="0 0 100 100" style="right:30%;bottom:8%;animation-delay:-6s"><path d="M50 8l11 34h36l-29 21 11 34-29-21-29 21 11-34L3 42h36z"/></svg>
+  </div>
+  <div class="wrap seventh-grid">
+    <div>
+      <p class="ask" data-reveal>Ask for our</p>
+      <p class="brandnew" data-reveal>BRAND NEW SHOW</p>
+      <h2 class="h2 gold split" data-split>The 7th Sense</h2>
+      <ul data-reveal><li>60 mins. - Edu-taining</li><li>Shock &amp; Awe,</li><li>Audience Participatory</li><li>Experiments.</li></ul>
+    </div>
+    <figure class="usa" data-reveal><div class="tilt"><div class="tilt-card" data-tilt><img src="assets/img/img054.png" width="1216" height="1754" loading="lazy" alt="Tour poster for Deepak RAO’s Extra Sensory Perception show across seven USA cities"></div></div><figcaption><span>7 Cities</span><span>Back Again</span><span>Across USA</span></figcaption></figure>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sec contact" id="contact" data-spot>
+  <div class="wrap">
+    <h2 class="h2 split" data-split>Please connect with us <em class="gold">DIRECTLY....</em></h2>
+    <p class="lead" data-reveal>also for our popular FUN - Mind Opening Corporate Training Sessions</p>
+    <a class="phone gold" href="tel:+919820684840" data-reveal>( +91 ) 98206 84840</a>
+    <a class="mail" href="mailto:neha@deepakrao-esp.com" data-reveal>neha@deepakrao-esp.com</a>
+    <div class="ctas" data-reveal><a class="btn btn-ghost magnetic" data-yt href="https://youtu.be/kk05WtnIuMQ">&lt;&lt; Click to ENTER our Cute Mumbai Office</a></div>
+  </div>
+</section>
+</main>
+
+<footer class="ftr">
+  <div class="wrap ftr-grid">
+    <div><img src="assets/img/img052.png" width="811" height="108" alt="Extra Sensory Perception"><p>Master Mind -- Deepak RAO</p></div>
+    <div><h3>Befriend Us :</h3><ul>
+      <li><a href="https://www.facebook.com/deepak.rao.9085?mibextid=2JQ9oc" target="_blank" rel="noopener">Connect on Facebook</a></li>
+      <li><a href="https://www.linkedin.com/in/deepak-rao-33552023" target="_blank" rel="noopener">Connect on Linkedin</a></li>
+      <li><a href="https://www.instagram.com/deepakrao_esp?igsh=eGlvMXlycGFvdndk" target="_blank" rel="noopener">Connect on Instagram</a></li></ul></div>
+    <div><h3>Deepak RAO’s</h3><ul>
+      <li><a href="#show">What’s it about</a></li><li><a href="#clients">Corporate Clientele</a></li><li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="#videos">Videos</a></li><li><a href="https://deepakraopresscoverage.weebly.com/" target="_blank" rel="noopener">Press Coverage</a></li><li><a href="#book">ESP Book</a></li></ul></div>
+  </div>
+</footer>
+
+<div class="dock"><a class="btn btn-gold" href="tel:+919820684840">Call : ( +91 ) 98206 84840</a></div>
+
+<dialog class="lb" id="lb" aria-label="Videos"><button class="lb-close" type="button" data-close>Close</button><div class="lb-frame" data-frame></div></dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const html = document.documentElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(pointer: fine)').matches;
+  const G = window.gsap, ST = window.ScrollTrigger;
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const failsafe = setTimeout(() => html.classList.add('loaded'), 3200);   // never trap the page behind the loader
+
+  /* ---------- smooth scroll ---------- */
+  let lenis = null;
+  if (G && ST) G.registerPlugin(ST);
+  if (!reduce && window.Lenis && G && ST) {
+    lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
+    lenis.on('scroll', ST.update);
+    G.ticker.add(t => lenis.raf(t * 1000)); G.ticker.lagSmoothing(0);
+    window.__lenis = lenis;   // exposed for automated checks
+  }
+  const goTo = target => lenis ? lenis.scrollTo(target, { offset: -70, duration: 1.4 }) : target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const t = document.getElementById(a.getAttribute('href').slice(1)); if (!t) return;
+    e.preventDefault(); closeMenu(); goTo(t);
+  }));
+
+  /* ---------- header hide / solid ---------- */
+  const hdr = $('#hdr'); let lastY = 0;
+  const onScroll = y => { hdr.classList.toggle('solid', y > 40); hdr.classList.toggle('away', y > 500 && y > lastY && menu.hidden); lastY = y; };
+  const menu = $('#menu');
+  if (lenis) lenis.on('scroll', ({ scroll }) => onScroll(scroll)); else addEventListener('scroll', () => onScroll(scrollY), { passive: true });
+
+  /* ---------- mobile menu ---------- */
+  const menuBtn = $('.hdr .menu-btn');
+  function closeMenu() { if (menu.hidden) return; menu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); lenis && lenis.start(); menuBtn.focus({ preventScroll: true }); }
+  menuBtn.addEventListener('click', () => { menu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); lenis && lenis.stop(); $('.menu-close').focus(); });
+  $('.menu-close').addEventListener('click', closeMenu);
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+  /* ---------- video lightbox ---------- */
+  const lb = $('#lb'), frame = $('[data-frame]', lb);
+  const ytId = u => { const m = u.match(/(?:youtu\.be\/|shorts\/|[?&]v=|\/v\/|embed\/)([\w-]{11})/); return m ? m[1] : null; };
+  $$('[data-yt]').forEach(a => a.addEventListener('click', e => {
+    const id = ytId(a.href); if (!id || !lb.showModal) return;
+    e.preventDefault();
+    frame.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="YouTube"></iframe>`;
+    lb.showModal(); lenis && lenis.stop();
+  }));
+  const closeLb = () => { lb.close(); };
+  lb.addEventListener('close', () => { frame.innerHTML = ''; lenis && lenis.start(); });
+  $('[data-close]', lb).addEventListener('click', closeLb);
+  lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+
+  /* ---------- testimonials slider ---------- */
+  const slides = $$('[data-slider] .slide'), dots = $('[data-dots]'); let cur = 0, timer;
+  slides.forEach((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', `${i + 1}`); b.addEventListener('click', () => show(i, true)); dots.appendChild(b); });
+  function show(i, user) {
+    cur = (i + slides.length) % slides.length;
+    slides.forEach((s, k) => s.classList.toggle('on', k === cur));
+    $$('button', dots).forEach((d, k) => d.setAttribute('aria-current', k === cur ? 'true' : 'false'));
+    clearInterval(timer); if (!reduce) timer = setInterval(() => show(cur + 1), user ? 12000 : 8000);
+  }
+  if (slides.length) { $('[data-prev]').addEventListener('click', () => show(cur - 1, true)); $('[data-next]').addEventListener('click', () => show(cur + 1, true)); show(0); }
+
+  const dock = $('.dock'), heroCta = $('.hero .ctas');
+  if (dock && heroCta && 'IntersectionObserver' in window) new IntersectionObserver(([en]) => dock.classList.toggle('hide', en.isIntersecting)).observe(heroCta);
+
+  /* ---------- tilt + magnetic + cursor + spotlight ---------- */
+  if (fine && !reduce) {
+    $$('[data-tilt]').forEach(c => {
+      const p = c.parentElement;
+      p.addEventListener('mousemove', e => { const r = p.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; c.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 8}deg)`; });
+      p.addEventListener('mouseleave', () => { c.style.transform = ''; });
+    });
+    $$('.magnetic').forEach(b => {
+      b.addEventListener('mousemove', e => { const r = b.getBoundingClientRect(); b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .22}px, ${(e.clientY - r.top - r.height / 2) * .3}px)`; });
+      b.addEventListener('mouseleave', () => { b.style.transform = ''; });
+    });
+    const dot = document.createElement('div'), ring = document.createElement('div');
+    dot.className = 'cursor'; ring.className = 'cursor-ring'; dot.setAttribute('aria-hidden', 'true'); ring.setAttribute('aria-hidden', 'true');
+    document.body.append(dot, ring);
+    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+    addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.transform = `translate(${mx}px, ${my}px)`; html.classList.add('cursor-on'); }, { passive: true });
+    (function loop() { rx += (mx - rx) * .16; ry += (my - ry) * .16; ring.style.transform = `translate(${rx}px, ${ry}px)`; requestAnimationFrame(loop); })();
+    $$('a, button').forEach(el => { el.addEventListener('mouseenter', () => ring.classList.add('big')); el.addEventListener('mouseleave', () => ring.classList.remove('big')); });
+    const spot = $('[data-spot]');
+    spot && spot.addEventListener('mousemove', e => { const r = spot.getBoundingClientRect(); spot.style.setProperty('--mx', `${e.clientX - r.left}px`); spot.style.setProperty('--my', `${e.clientY - r.top}px`); });
+    const seal = $('[data-seal]');
+    $('.hero').addEventListener('mousemove', e => { const x = e.clientX / innerWidth - .5, y = e.clientY / innerHeight - .5; seal.style.transform = `translate(${x * -24}px, ${y * -18}px)`; });
+  }
+
+  /* ---------- dust in the light ---------- */
+  const cv = $('.dust');
+  if (cv && !reduce) {
+    const ctx = cv.getContext('2d'); let W, H, run = true; const P = [];
+    const size = () => { const d = Math.min(devicePixelRatio || 1, 2); W = cv.clientWidth; H = cv.clientHeight; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
+    size(); addEventListener('resize', size);
+    for (let i = 0; i < 90; i++) P.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.8 + .4, vy: -(Math.random() * .25 + .05), vx: (Math.random() - .5) * .15, a: Math.random(), s: Math.random() * .02 + .004 });
+    new IntersectionObserver(([en]) => { run = en.isIntersecting; if (run) tick(); }).observe(cv);
+    function tick() {
+      if (!run) return;
+      ctx.clearRect(0, 0, W, H);
+      for (const p of P) {
+        p.x += p.vx; p.y += p.vy; p.a += p.s; if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+        const o = (Math.sin(p.a) * .5 + .5) * .75;
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+        g.addColorStop(0, `rgba(255,232,180,${o})`); g.addColorStop(1, 'rgba(255,232,180,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, 6.283); ctx.fill();
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  /* ---------- no GSAP: show everything ---------- */
+  if (!G || !ST || reduce) {
+    html.classList.remove('js'); html.classList.add('loaded'); clearTimeout(failsafe);
+    $$('.vip-item').forEach(i => i.classList.add('on'));
+    return;
+  }
+
+  /* ---------- split helpers ---------- */
+  const splitWords = el => {
+    const walk = node => [...node.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(t => {
+          if (!t) return;
+          if (/^\s+$/.test(t)) { frag.append(t); return; }
+          const w = document.createElement('span'); w.className = 'w';
+          const i = document.createElement('span'); i.className = 'wi'; i.textContent = t; w.append(i); frag.append(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1) walk(n);
+    });
+    walk(el);
+    [el, ...$$('.gold', el)].forEach(g => { if (!g.classList.contains('gold')) return; $$('.wi', g).forEach(w => w.classList.add('gold')); g.classList.remove('gold'); });
+    return $$('.wi', el);
+  };
+  const title = $('[data-title]');
+  const chars = (() => {
+    const words = title.textContent.split(' '); title.textContent = '';
+    words.forEach((w, k) => {
+      const ws = document.createElement('span'); ws.className = 'w';
+      [...w].forEach(c => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; ws.append(s); });
+      title.append(ws); if (k < words.length - 1) title.append(' ');
+    });
+    return $$('.ch', title);
+  })();
+
+  /* ---------- intro ---------- */
+  G.set(chars, { yPercent: 110 });
+  G.set('[data-hero]', { y: 30, autoAlpha: 0 });
+  G.set('.hero-media img', { scale: 1.18, autoAlpha: 0 });
+  G.set('.beams', { autoAlpha: 0 });
+  G.set('[data-seal]', { scale: .4, rotate: -40, autoAlpha: 0 });
+  const intro = () => {
+    clearTimeout(failsafe); html.classList.add('loaded');
+    const tl = G.timeline({ defaults: { ease: 'expo.out' } });
+    tl.to('.hero-media img', { scale: 1, autoAlpha: 1, duration: 2.6 }, .2)
+      .to('.beams', { autoAlpha: 1, duration: 2.2 }, .5)
+      .to(chars, { yPercent: 0, duration: 1.4, stagger: .045 }, .55)
+      .to('[data-hero]', { y: 0, autoAlpha: 1, duration: 1.2, stagger: .12 }, .9)
+      .to('[data-seal]', { scale: 1, rotate: 0, autoAlpha: 1, duration: 1.6, ease: 'back.out(1.6)' }, 1.3)
+      .add(() => html.classList.add('intro-done'));
+  };
+  if (document.readyState === 'complete') setTimeout(intro, 600); else addEventListener('load', () => setTimeout(intro, 600));
+
+  /* hero parallax out */
+  G.to('.hero-media img', { yPercent: 14, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+  G.to('.hero-inner', { yPercent: -10, autoAlpha: .2, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'center top', end: 'bottom top', scrub: true } });
+
+  /* ---------- reveals ---------- */
+  $$('[data-split]').forEach(h => {
+    const w = splitWords(h);
+    G.from(w, { yPercent: 110, duration: 1.3, ease: 'expo.out', stagger: .06, scrollTrigger: { trigger: h, start: 'top 85%' }, onComplete: () => h.classList.add('done') });
+  });
+  $$('[data-reveal]').forEach(el => G.from(el, { y: 46, autoAlpha: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 88%' } }));
+  $$('[data-rule]').forEach(el => G.from(el, { scaleX: 0, duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 90%' } }));
+  $$('[data-num]').forEach(el => G.from(el, { yPercent: 105, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 92%' } }));
+  $$('.shot-img img, .vcard img, .signing img').forEach(img => G.fromTo(img, { scale: 1.18 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: true } }));
+  G.from('.vcard', { y: 60, autoAlpha: 0, duration: 1.2, ease: 'expo.out', stagger: .08, scrollTrigger: { trigger: '.vgrid', start: 'top 82%' } });
+
+  /* ---------- VIP: list lights up, poster pans ---------- */
+  $$('.vip-item').forEach(it => ST.create({ trigger: it, start: 'top 62%', end: 'bottom 38%', toggleClass: 'on' }));
+  const mm = G.matchMedia();
+  mm.add('(min-width: 901px)', () => {
+    const fr = $('[data-vipframe]'), img = $('img', fr);
+    G.to(img, { y: () => -(img.offsetHeight - fr.clientHeight), ease: 'none', scrollTrigger: { trigger: '.vip-list', start: 'top 60%', end: 'bottom 70%', scrub: .6, invalidateOnRefresh: true } });
+    /* horizontal gallery */
+    const track = $('[data-hztrack]');
+    const dist = () => Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
+    G.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '[data-hzpin]', start: 'center center', end: () => '+=' + dist(), pin: true, scrub: .8, invalidateOnRefresh: true, anticipatePin: 1 } });
+  });
+  addEventListener('load', () => ST.refresh());
+})();
+</script>
+</body>
+</html>
