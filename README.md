@@ -19,6 +19,10 @@ Homepage design sample for [deepakrao-esp.com](https://www.deepakrao-esp.com/). 
 - Video grid that plays in a lightbox (only videos whose owner allows embedding), testimonials slider, the book, The 7th Sense, contact.
 - Smooth scrolling (Lenis), scroll animations (GSAP + ScrollTrigger), custom cursor, magnetic buttons. Reduced-motion users get a static page; without JavaScript all content still shows.
 
+## Pages
+
+`index.html` (home), `clients.html` (699 event records, A–Z + search), `clients-list.html` (482 client names), `testimonials.html`, `audience-feedback.html` (218 letters, year index + search), `videos.html`, `show.html`, `mental-abilities.html`, `profile.html`, `esp-book.html`, `book-launches.html`, `secrets-revealed.html`, `contact.html`, `404.html`. All linked from the header, menu and footer. Inner pages are generated from the verified content models, so their text is verbatim too.
+
 ## Checked
 
 Chrome at 1440, 768 and 390px wide: no sideways scrolling, 0 console errors, no broken images, one H1. Video lightbox, phone menu and testimonial slider tested.
@@ -28,4 +32,3 @@ Chrome at 1440, 768 and 390px wide: no sideways scrolling, 0 console errors, no 
 - 20 of the site's 56 YouTube videos have embedding disabled by the channel owner; those open on YouTube instead of in the lightbox.
 - The original photos are low resolution. The final build should use the client's original high-res photos (and ideally a stage video for the hero).
 - Images are the site's originals, unoptimised. The production build will serve compressed AVIF/WebP versions.
-- This is one page. Inner pages (client directory, videos, testimonials, book) follow in the same style.
