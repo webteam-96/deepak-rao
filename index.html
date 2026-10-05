@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="en" class="js">
+<html lang="en">
 <head>
 <meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Master Mind -- Deepak RAO</title>
 <link rel="icon" href="data:,">
@@ -83,7 +84,7 @@ html:not(.js) .loader{display:none}
 .title{margin:0;font:500 clamp(3.6rem,11.4vw,11rem)/.9 var(--serif);letter-spacing:-.025em;color:var(--ivory);text-shadow:0 0 60px rgba(255,220,150,.18)}
 .title .ch{display:inline-block;will-change:transform}
 .title .w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .08em .06em;margin:0 -.08em}
-.claim{margin:.25em 0 0;font:400 clamp(1.9rem,4.6vw,4.3rem)/1.05 var(--serif);letter-spacing:-.01em}
+.claim{margin:.5em 0 0;font:400 clamp(1.9rem,4.6vw,4.3rem)/1.05 var(--serif);letter-spacing:-.01em}
 .claim.gold{animation:sheen 6s ease-in-out infinite}
 @keyframes sheen{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 .pitch{max-width:58ch;margin:1.4rem 0 0;color:var(--muted);font-size:clamp(1rem,1.3vw,1.15rem);line-height:1.75}
@@ -162,7 +163,7 @@ section{position:relative}
 .vip-go{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;border:1px solid var(--line-2);color:var(--gold);text-decoration:none;transition:background .4s,color .4s,transform .5s var(--ease),border-color .4s}
 .vip-go:hover{background:var(--gold);color:var(--black);border-color:var(--gold);transform:scale(1.08)}
 .vip-go svg{width:18px;height:18px}
-.js .vip-item{opacity:.5}.js .vip-item.on{opacity:1}.js .vip-item.on h3{color:var(--gold-hi)}
+.js .vip-item{opacity:.75}.js .vip-item.on{opacity:1}.js .vip-item.on h3{color:var(--gold-hi)}
 
 /* horizontal gallery */
 .hz{background:var(--black)}
@@ -267,8 +268,8 @@ html:not(.js) .tst-nav{display:none}
 .ftr{border-top:1px solid var(--line);padding:56px 0 calc(40px + env(safe-area-inset-bottom));background:#080605}
 .ftr-grid{display:grid;grid-template-columns:minmax(0,1.2fr) repeat(2,minmax(0,1fr));gap:40px;align-items:start}
 .ftr img{width:220px}
-.ftr p{margin:14px 0 0;color:var(--dim);font-size:.9rem}
-.ftr h3{margin:0 0 14px;font:600 .85rem/1.3 var(--sans);color:var(--gold);letter-spacing:.04em}
+.ftr p{margin:14px 0 0;color:var(--muted);font-size:.9rem}
+.ftr h2{margin:0 0 14px;font:600 .85rem/1.3 var(--sans);color:var(--gold);letter-spacing:.04em}
 .ftr ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .ftr a{display:inline-flex;align-items:center;min-height:36px;text-decoration:none;color:var(--muted);transition:color .3s}
 .ftr ul{gap:2px}
@@ -306,7 +307,8 @@ html:not(.js) .tst-nav{display:none}
   .show-grid,.book-grid,.seventh-grid,.tst-wrap,.vip-grid{grid-template-columns:minmax(0,1fr)}
   .quotes{grid-template-columns:minmax(0,1fr)}
   .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px}
-  .vip-frame{position:relative;top:0;height:auto;max-height:70vh;overflow-y:auto;max-width:440px}
+  .vip-frame{position:relative;top:0;height:min(64vh,460px);overflow:hidden;max-width:440px}
+  .vip-frame::after{content:"";position:absolute;inset:auto 0 0;height:34%;background:linear-gradient(transparent,var(--black));pointer-events:none}
   .vip-frame img{transform:none!important}
   .hz-viewport{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:10px}
   .shot{scroll-snap-align:center;width:min(84vw,560px)}
@@ -321,12 +323,14 @@ html:not(.js) .tst-nav{display:none}
   .hero-media{height:440px}
   .hero-media img{object-position:46% 0;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 26%,transparent 50%);mask-image:linear-gradient(to bottom,#000 0%,#000 26%,transparent 50%)}
   .hero-inner{padding-top:300px;padding-bottom:84px}
-  .seal{top:250px;bottom:auto;right:var(--gut);width:96px}
+  .seal{top:176px;bottom:auto;right:var(--gut);width:84px}
   .vgrid{grid-template-columns:minmax(0,1fr)}
   .vcard:first-child{grid-column:auto;grid-row:auto}
   .vcard:first-child img{aspect-ratio:16/10;height:auto}
   .vcard:first-child .play{top:14px;right:14px;left:auto;width:52px;height:52px;translate:none}
-  .stats-grid{grid-template-columns:minmax(0,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat:nth-child(3){grid-column:1/-1}
+  .poster-card::after{inset:-8px}
   .tst-stage{min-height:520px}
   .ctas .btn{width:100%}
   .phone{font-size:2.1rem}
@@ -336,18 +340,70 @@ html:not(.js) .tst-nav{display:none}
   .grain,.beams,.dust{display:none}
   .js .vip-item{opacity:1}
 }
+
+/* hero sub-headline tail, clients link line */
+.pitch-more{margin:14px 0 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;font-size:.95rem;color:var(--muted)}
+.pitch-more a{color:var(--gold-hi);text-underline-offset:4px;text-decoration-thickness:1px}
+.pitch-more .believe{white-space:nowrap;color:var(--ivory)}
+.pitch-more .dashes{letter-spacing:-.22em;color:var(--gold);opacity:.55;margin-right:.3em}
+.hz-sub{margin:12px 0 0;color:var(--muted)}
+.hz-sub a{color:var(--gold-hi);text-underline-offset:4px;text-decoration-thickness:1px}
+.hz-sub a,.pitch-more a,.contact .mail{padding-block:3px}
+/* explore board */
+.explore{padding-block:clamp(64px,9vw,128px)}
+.ex-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.ex{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;min-height:168px;padding:24px 26px;border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(160deg,rgba(255,240,194,.06),rgba(255,240,194,0) 60%),#0E0B08;text-decoration:none;color:var(--ivory);overflow:hidden;
+  transition:border-color .5s,background-color .5s,translate .7s var(--ease)}
+.ex::before{content:"";position:absolute;top:22px;right:22px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);
+  background:no-repeat center/13px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D9B25E' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M7 17 17 7M9 7h8v8'/%3E%3C/svg%3E");transition:background-color .5s,border-color .5s}
+.ex:hover{border-color:var(--gold);translate:0 -4px}
+.ex:hover::before{background-color:rgba(217,178,94,.14);border-color:var(--gold)}
+.ex b{font:400 clamp(1.4rem,2vw,1.85rem)/1.15 var(--serif)}
+.ex span{color:var(--muted);font-size:.98rem}
+.ex-wide{grid-column:span 2}
+.ex-call{grid-column:1/-1;min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 28px;padding:28px 32px;
+  background:var(--metal);background-size:200% 100%;color:#1B1308;border-color:transparent;animation:sheen 7s ease-in-out infinite}
+.ex-call::before{display:none}
+.ex-call .ex-7{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;color:#1B1308}
+.ex-call small{font:600 .9rem/1.3 var(--sans);color:#3A2A10}
+.ex-call b{font-size:clamp(1.6rem,2.6vw,2.3rem)}
+.ex-call .ex-num{font:600 clamp(1.05rem,1.5vw,1.25rem)/1.2 var(--sans);color:#1B1308;white-space:nowrap}
+.views{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:16px;font-size:.85rem;color:var(--muted)}
+.views img{display:block;width:auto;height:20px;opacity:.9}
+@media (max-width:900px){.ex-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.ex{min-height:132px;padding:20px}.ex::before{top:16px;right:16px;width:30px;height:30px}.ex-call{padding:22px}}
+
+/* accessibility */
+.loader{animation:loader-out 0s 4s forwards}
+@keyframes loader-out{to{visibility:hidden}}
+html:not(.js) .menu-btn{display:none}
+[tabindex="-1"]:focus{outline:none}
+html:has(.menu:not([hidden])),html:has(.lb[open]){overflow:hidden}
+.menu{overscroll-behavior:contain}
+html{scroll-padding:96px 0}
+.hdr:focus-within{transform:none}
+.mq-track{animation:none}
+.vip-zoom{display:block}
+.sold-row{display:flex;align-items:center;gap:clamp(18px,3vw,32px)}
+.book-mini{flex:none;display:block;filter:drop-shadow(0 18px 30px rgba(0,0,0,.6));transition:translate .6s var(--ease)}
+.book-mini:hover{translate:0 -4px}
+.book-mini img{display:block;width:clamp(76px,9vw,116px);height:auto}
+.lb.lb-img{width:min(92vw,640px)}
+.lb.lb-img .lb-frame{aspect-ratio:auto;max-height:84vh;overflow-y:auto;overscroll-behavior:contain}
+.lb-poster{display:block;width:100%;height:auto}
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="loader" aria-hidden="true"><div class="loader-inner"><img src="assets/img/img052.png" width="811" height="108" alt=""><span class="loader-line"></span></div></div>
+<div class="loader" aria-hidden="true"><div class="loader-inner"><img src="assets/img/img052.webp" width="811" height="108" alt=""><span class="loader-line"></span></div></div>
 <div class="grain" aria-hidden="true"></div>
 
 <header class="hdr" id="hdr">
   <div class="wrap">
     <a class="brand" href="#top" aria-label="Deepak RAO’s Extra Sensory Perception">
       <small>Deepak RAO’s</small>
-      <img src="assets/img/img052.png" width="811" height="108" alt="Extra Sensory Perception">
+      <img src="assets/img/img052.webp" width="811" height="108" alt="Extra Sensory Perception">
     </a>
     <nav class="nav" aria-label="Main">
       <a href="show.html">What’s it about</a>
@@ -362,7 +418,7 @@ html:not(.js) .tst-nav{display:none}
   </div>
 </header>
 
-<div class="menu" id="menu" hidden>
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
   <div class="menu-top"><button class="menu-btn menu-close" type="button" style="display:inline-flex;align-items:center">Close</button></div>
   <nav aria-label="Main">
     <a href="show.html">What’s it about</a>
@@ -380,20 +436,21 @@ html:not(.js) .tst-nav{display:none}
 
 <!-- HERO -->
 <section class="hero" id="top">
-  <div class="hero-media"><img src="assets/img/img071.jpg" width="1378" height="884" alt="Deepak Rao on stage, seen from behind, facing a packed ballroom under stage lights" fetchpriority="high"></div>
+  <div class="hero-media"><img src="assets/img/img071.webp" width="1378" height="884" alt="Deepak Rao on stage, seen from behind, facing a packed ballroom under stage lights" fetchpriority="high"></div>
   <div class="beams" aria-hidden="true"><i></i><i></i><i></i></div>
   <canvas class="dust" aria-hidden="true"></canvas>
   <div class="hero-inner wrap">
     <p class="moniker" data-hero>ESP Man</p>
     <h1 class="title" data-title>Deepak RAO</h1>
     <p class="claim gold" data-hero>Over 500 Corporates</p>
-    <p class="pitch" data-hero>Book this Amazing ‘ ESP ’ &amp; Mind Show... Repeatedly - in 35 Key Countries, spanning Asia, Far East, Middle East, Africa, Czech, UK, Europe, Canada &amp; America !</p>
+    <p class="pitch" data-hero>Book this Amazing ‘ ESP ’ &amp; Mind Show... Repeatedly - in 35 Key Countries, spanning Asia, Far East, Middle East, Africa, Czech, UK, Europe, Canada &amp; America&nbsp;!</p>
+    <p class="pitch-more" data-hero>Click on Corporate Clientele Link Below <a href="clients.html">See Photos / Videos</a> <span class="believe"><span class="dashes" aria-hidden="true">---------------</span> to BELIEVE It !!!! <span class="dashes" aria-hidden="true">---------------</span></span></p>
     <div class="ctas" data-hero>
       <a class="btn btn-gold magnetic" href="tel:+919820684840"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Call : ( +91 ) 98206 84840</a>
       <a class="btn btn-ghost magnetic" href="clients.html">Check-out Clientele Photos</a>
     </div>
   </div>
-  <img class="seal" data-seal src="assets/img/img056.png" width="312" height="312" alt="Asia’s Only">
+  <img class="seal" data-seal src="assets/img/img056.webp" width="312" height="312" alt="Asia’s Only">
   <div class="cue" aria-hidden="true"></div>
 </section>
 
@@ -410,20 +467,20 @@ html:not(.js) .tst-nav{display:none}
       <div class="show-copy">
         <h2 class="h2 gold split" data-split>Extra Sensory Perception</h2>
         <p class="lead" data-reveal>60 mins. Mystical &amp; Enjoyable</p>
-        <p data-reveal>2 - Man High Octane Mind-blowing Show.... with Total Audience Participation ON STAGE !</p>
-        <p data-reveal>Engaging &amp; Riveting - Lifetime Experience with a Motivational Impact !!</p>
+        <p data-reveal>2 - Man High Octane Mind-blowing Show.... with Total Audience Participation ON STAGE&nbsp;!</p>
+        <p data-reveal>Engaging &amp; Riveting - Lifetime Experience with a Motivational Impact&nbsp;!!</p>
         <span class="rule" data-rule></span>
-        <p class="muted" data-reveal>Applauded as the 'Single Most Classy Form of Interactive, Edu-taining Sessions' presented at the highest levels of Corporate India &amp; Asia !</p>
+        <p class="muted" data-reveal>Applauded as the 'Single Most Classy Form of Interactive, Edu-taining Sessions' presented at the highest levels of Corporate India &amp; Asia&nbsp;!</p>
       </div>
       <div class="poster" data-reveal>
         <div class="poster-glow" aria-hidden="true"></div>
-        <div class="poster-card tilt-card" data-tilt><img src="assets/img/img058.jpg" width="1351" height="891" loading="lazy" alt="Deepak RAO’s ESP Mind Show on stage: Deepak at left and his blindfolded partner at right, before a seated audience"></div>
+        <div class="poster-card tilt-card" data-tilt><img src="assets/img/img058.webp" width="1351" height="891" loading="lazy" alt="Deepak RAO’s ESP Mind Show on stage: Deepak at left and his blindfolded partner at right, before a seated audience"></div>
       </div>
     </div>
     <div class="quotes">
-      <div class="q" data-reveal><p>PLEASE NOTE : Its NOT a Comedy Show, but the audience is 'Constantly Laughing' with Amazement and Spot Situational Humour !</p></div>
-      <div class="q" data-reveal><p>Participants are ' Never Embarrassed or Discomforted '. Infact, it is a Positive 'Experience of a Lifetime' !!</p></div>
-      <div class="q" data-reveal><p>Excitement to Participate. Standing Ovations - A routine feature !</p></div>
+      <div class="q" data-reveal><p>PLEASE NOTE : Its NOT a Comedy Show, but the audience is 'Constantly Laughing' with Amazement and Spot Situational Humour&nbsp;!</p></div>
+      <div class="q" data-reveal><p>Participants are ' Never Embarrassed or Discomforted '. Infact, it is a Positive 'Experience of a Lifetime'&nbsp;!!</p></div>
+      <div class="q" data-reveal><p>Excitement to Participate. Standing Ovations - A routine feature&nbsp;!</p></div>
     </div>
   </div>
 </section>
@@ -442,25 +499,25 @@ html:not(.js) .tst-nav{display:none}
 <section class="sec vip" id="vip">
   <div class="wrap">
     <div class="vip-head">
-      <h2 class="h2 split" data-split>Presented at the Highest Levels of <em class="gold">Corporate India !!</em></h2>
+      <h2 class="h2 split" data-split>Presented at the Highest Levels of <em class="gold">Corporate India&nbsp;!!</em></h2>
       <p class="muted" data-reveal>( Click Photos to view Event Videos )</p>
     </div>
     <div class="vip-grid">
-      <div class="vip-frame" data-vipframe><img src="assets/img/img057.png" width="830" height="4564" loading="lazy" alt="Poster of photographs of Deepak Rao with senior leaders who hosted his ESP Show"></div>
+      <div class="vip-frame" data-vipframe><a class="vip-zoom" href="assets/img/img057.webp"><img src="assets/img/img057.webp" width="830" height="4564" loading="lazy" alt="Poster of photographs of Deepak Rao with senior leaders who hosted his ESP Show"></a></div>
       <ol class="vip-list">
         <li class="vip-item"><div><h3>RBI Governor Shaktikanta Das</h3><p>hosts Deepak RAO’s ESP Show for RBI Top Management Conference</p></div><div class="vip-links"><a class="vip-go" data-yt href="https://youtube.com/shorts/DuVYjM3TVG8?si=bv3YRNbS2dfRUUoS" aria-label="RBI Governor hosts Deepak RAO's ESP Show"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a><a class="vip-go" data-yt href="https://youtu.be/iqzHkly5wL0" aria-label="RBI Governor hosts Deepak RAO's ESP Show"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></div></li>
         <li class="vip-item"><div><h3>Challa Sreenivasulu Setty</h3><span class="role">State Bank of India Chairman</span><p>felicitates Deepak RAO after his ESP Show for SBI Chairman’s Club.</p></div><div class="vip-links"><a class="vip-go" data-yt href="https://youtu.be/4Gvtt9AiB7U" aria-label="SBI Chairman invites Deepak RAO"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>Ajay Piramal</h3><p>hosts Deepak RAO’s ESP Show and introduces him to the Piramal Board of Directors.</p></div><div class="vip-links"><a class="vip-go" href="https://www.youtube.com/watch?v=QW7oDQ9h970" target="_blank" rel="noopener" aria-label="Ajay Piramal introduces Deepak RAO"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>Narayana Murthy</h3><p>invites ESP Man Deepak RAO to the Asia Business Council Meet</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-asia-business-councilforum.blogspot.com/" target="_blank" rel="noopener" aria-label="Narayan Murthy invites Deepak RAO"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>The Groom - Rishi Sunak</h3><p>Future PM of UK participates with Akshata Murthy ( Pre-wedding get-together, hosted by Narayan Murthy ).</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-narayana-murthy-pvt-event.blogspot.com/" target="_blank" rel="noopener" aria-label="Rishi Sunak &amp; Akshata Murthy participate in the ESP Show"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>Harsh Goenka</h3><span class="role">Chairman - RPG Group</span><p>hosts the ESP Show while participating actively on stage.</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-choksey-family-event.blogspot.com/" target="_blank" rel="noopener" aria-label="Harsh Goenka participates at the Choksey Family Event (Choksey Chemicals)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>HH Sheikh Saud Bin Saqr Al Qasimi</h3><span class="role">King of Ras Al Khaimah - ( 3rd largest UAE Emirate )</span><p>invites Deepak RAO to his palace after experiencing the ESP Show.</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-rak-hospital3.blogspot.com/" target="_blank" rel="noopener" aria-label="Ras Al Khaimah King - 3rd largest UAE Emirate, HH Sheikh Saud Bin Saqr Al Qasimi invites Deepak RAO"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>Anshuman Ruia</h3><p>books the ‘ESP &amp; Mind’ Show, for a special private get-together</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-ruias1.blogspot.com/" target="_blank" rel="noopener" aria-label="Anshuman Ruia invites Deepak RAO"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>Shekhar Bajaj</h3><span class="role">Chairman - Bajaj Electricals</span><p>invites....</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-bajaj-electricals.blogspot.com/" target="_blank" rel="noopener" aria-label="Shekhar Bajaj participates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>Naresh Goyal</h3><p>invites Deepak RAO to the Jet Airways Global Station Manager’s Conference</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-jet-airways.blogspot.com/" target="_blank" rel="noopener" aria-label="Naresh Goyal hosts Deepak RAO -  Jet Airways World-wide Station Manager’s Conference at Hotel Renaissance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>Jamshyd Godrej</h3><p>participates in the ESP Show</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-asia-business-councilforum.blogspot.com/" target="_blank" rel="noopener" aria-label="Jamshyd Godrej actively participates in the ESP Show"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Ajay Piramal</h3><p>hosts Deepak RAO’s ESP Show and introduces him to the Piramal Board of Directors.</p></div><div class="vip-links"><a class="vip-go" href="video-ajay-piramal.html" aria-label="Ajay Piramal introduces Deepak RAO"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Narayana Murthy</h3><p>invites ESP Man Deepak RAO to the Asia Business Council Meet</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-asia-business-councilforum.blogspot.com/" aria-label="Narayan Murthy invites Deepak RAO"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>The Groom - Rishi Sunak</h3><p>Future PM of UK participates with Akshata Murthy ( Pre-wedding get-together, hosted by Narayan Murthy ).</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-narayana-murthy-pvt-event.blogspot.com/" aria-label="Rishi Sunak &amp; Akshata Murthy participate in the ESP Show"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Harsh Goenka</h3><span class="role">Chairman - RPG Group</span><p>hosts the ESP Show while participating actively on stage.</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-choksey-family-event.blogspot.com/" aria-label="Harsh Goenka participates at the Choksey Family Event (Choksey Chemicals)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>HH Sheikh Saud Bin Saqr Al Qasimi</h3><span class="role">King of Ras Al Khaimah - ( 3rd largest UAE Emirate )</span><p>invites Deepak RAO to his palace after experiencing the ESP Show.</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-rak-hospital3.blogspot.com/" aria-label="Ras Al Khaimah King - 3rd largest UAE Emirate, HH Sheikh Saud Bin Saqr Al Qasimi invites Deepak RAO"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Anshuman Ruia</h3><p>books the ‘ESP &amp; Mind’ Show, for a special private get-together</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-ruias1.blogspot.com/" aria-label="Anshuman Ruia invites Deepak RAO"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Shekhar Bajaj</h3><span class="role">Chairman - Bajaj Electricals</span><p>invites....</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-bajaj-electricals.blogspot.com/" aria-label="Shekhar Bajaj participates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Naresh Goyal</h3><p>invites Deepak RAO to the Jet Airways Global Station Manager’s Conference</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-jet-airways.blogspot.com/" aria-label="Naresh Goyal hosts Deepak RAO -  Jet Airways World-wide Station Manager’s Conference at Hotel Renaissance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Jamshyd Godrej</h3><p>participates in the ESP Show</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-asia-business-councilforum.blogspot.com/" aria-label="Jamshyd Godrej actively participates in the ESP Show"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
         <li class="vip-item"><div><h3>Chef Sanjeev Kapoor</h3><p>hosts ESP Man Deepak RAO</p></div><div class="vip-links"><a class="vip-go" data-yt href="https://youtu.be/t_kcDtOxAH8" aria-label="Chef Sanjeev Kapoor hosts ESP Man Deepak RAO"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></a></div></li>
-        <li class="vip-item"><div><h3>Farah Khan, Jagmohan Mundra, Deepak Rao &amp; Nari Hira</h3><p>at the ESP Book Launch Published by Magna</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-2nd-book-launch.blogspot.com/" target="_blank" rel="noopener" aria-label="2nd launch of Deepak RAO’s book - ‘Unlock Your ESP Potential"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
+        <li class="vip-item"><div><h3>Farah Khan, Jagmohan Mundra, Deepak Rao &amp; Nari Hira</h3><p>at the ESP Book Launch Published by Magna</p></div><div class="vip-links"><a class="vip-go" href="https://deepak-rao-2nd-book-launch.blogspot.com/" aria-label="2nd launch of Deepak RAO’s book - ‘Unlock Your ESP Potential"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div></li>
       </ol>
     </div>
   </div>
@@ -469,20 +526,24 @@ html:not(.js) .tst-nav{display:none}
 <!-- CLIENTELE WITH EVENT PHOTOS: horizontal -->
 <section class="sec hz" id="clients">
   <div class="wrap hz-head">
-    <h2 class="h2 split" data-split>Unbelievable Body of <em class="gold">Work !</em></h2>
+    <h2 class="h2 split" data-split>Unbelievable Body of <em class="gold">Work&nbsp;!</em></h2>
     <p class="muted" data-reveal>Over 8000 Photos / Videos visible on our Exhaustive Client list Alphabetical Order</p>
+    <p class="hz-sub" data-reveal><a href="clients.html">Click any Corporate Name to view Event</a> <span>( Alphabetical Order )</span></p>
   </div>
   <div class="hz-pin" data-hzpin>
     <div class="hz-viewport">
       <div class="hz-track" data-hztrack>
-        <figure class="shot"><div class="shot-img"><img src="assets/img/img063.jpg" width="1299" height="733" style="--ar:1299/733" loading="lazy" alt="Deepak Rao on stage before a packed auditorium with a full balcony"></div><figcaption><i>01</i>JIO ( Mumbai )</figcaption></figure>
-        <figure class="shot"><div class="shot-img"><img src="assets/img/img061.jpg" width="1299" height="745" style="--ar:1299/745" loading="lazy" alt="A banquet-hall audience laughing heartily during the show"></div><figcaption><i>02</i>Hiperdist Gulf ( 2014 )</figcaption></figure>
-        <figure class="shot"><div class="shot-img"><img src="assets/img/img062.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Employees in matching track jackets laughing and clapping"></div><figcaption><i>03</i>Glenmark Pharma.</figcaption></figure>
-        <figure class="shot"><div class="shot-img"><img src="assets/img/img067.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="A participant bows deeply to Deepak Rao on stage"></div><figcaption><i>04</i>Standard Chartered Bank ( Chennai )</figcaption></figure>
-        <figure class="shot"><div class="shot-img"><img src="assets/img/img065.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Executives on a red-carpet stage watch a demonstration"></div><figcaption><i>05</i>Motilal Oswal Securities ( Mumbai )</figcaption></figure>
-        <figure class="shot"><div class="shot-img"><img src="assets/img/img066.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Rows of audience members all pointing forward together"></div><figcaption><i>06</i>Bharti Teletech Beetel ( Delhi )</figcaption></figure>
-        <figure class="shot"><div class="shot-img"><img src="assets/img/img070.jpg" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Guests in suits standing and applauding in a banquet hall"></div><figcaption><i>07</i>Western Union Money Transfer ( Cochin )</figcaption></figure>
-        <figure class="shot"><div class="shot-img"><img src="assets/img/img069.jpg" width="1299" height="518" style="--ar:1299/518" loading="lazy" alt="A long row of executives standing and applauding"></div><figcaption><i>08</i>Canara Bank - Chairman ( Bangalore )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img063.webp" width="1299" height="733" style="--ar:1299/733" loading="lazy" alt="Deepak Rao on stage before a packed auditorium with a full balcony"></div><figcaption><i>01</i>JIO ( Mumbai )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img061.webp" width="1299" height="745" style="--ar:1299/745" loading="lazy" alt="A banquet-hall audience laughing heartily during the show"></div><figcaption><i>02</i>Hiperdist Gulf ( 2014 )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img062.webp" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Employees in matching track jackets laughing and clapping"></div><figcaption><i>03</i>Glenmark Pharma.</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img067.webp" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="A participant bows deeply to Deepak Rao on stage"></div><figcaption><i>04</i>Standard Chartered Bank ( Chennai )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img065.webp" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Executives on a red-carpet stage watch a demonstration"></div><figcaption><i>05</i>Motilal Oswal Securities ( Mumbai )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img066.webp" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Rows of audience members all pointing forward together"></div><figcaption><i>06</i>Bharti Teletech Beetel ( Delhi )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img070.webp" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Guests in suits standing and applauding in a banquet hall"></div><figcaption><i>07</i>Western Union Money Transfer ( Cochin )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img069.webp" width="1299" height="518" style="--ar:1299/518" loading="lazy" alt="A long row of executives standing and applauding"></div><figcaption><i>08</i>Canara Bank - Chairman ( Bangalore )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img072.webp" width="1299" height="697" style="--ar:1299/697" loading="lazy" alt="Guests stand on a stage under a banner presenting Deepak Rao’s Extra Sensory Perception"></div><figcaption><i>09</i>CFM International ( Mumbai )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img064.webp" width="1299" height="787" style="--ar:1299/787" loading="lazy" alt="Executives with lanyards on a conference stage in front of a McDonald’s backdrop"></div><figcaption><i>10</i>McDonalds India ( Goa )</figcaption></figure>
+        <figure class="shot"><div class="shot-img"><img src="assets/img/img060.webp" width="1299" height="787" style="--ar:1299/787" loading="lazy" alt="Men in office wear stand on a stage branded ignite in front of a projected slide"></div><figcaption><i>11</i></figcaption></figure>
       </div>
     </div>
   </div>
@@ -497,14 +558,14 @@ html:not(.js) .tst-nav{display:none}
       <a class="btn btn-ghost magnetic" href="videos.html">VIDEOS</a>
     </div>
     <div class="vgrid">
-      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=XDVnIZUHPKo"><img src="https://i.ytimg.com/vi/XDVnIZUHPKo/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Tata Motors Event - Ends with a Standing Ovation !"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Tata Motors</b><span>ESP Show ends with a Standing Ovation !!</span></span></a>
-      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=6CpfebQxhxY"><img src="https://i.ytimg.com/vi/6CpfebQxhxY/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Excitement, Shock &amp; Awe at Raymond - Senior Management Conference"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Excitement, Shock &amp; Awe !! Raymond Sr. Management Conf.</b><span>Delegates Express Joy</span></span></a>
-      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=dGsL0Ah8Ffw"><img src="https://i.ytimg.com/vi/dGsL0Ah8Ffw/hqdefault.jpg" width="480" height="360" loading="lazy" alt="RPG Group Chairman - Mr. Harsh Goenka, participates actively on stage with Deepak Rao"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Harsh Goenka ( RPG Chief )</b><span>participates with Deepak Rao</span></span></a>
-      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=RMxZnpLapog"><img src="https://i.ytimg.com/vi/RMxZnpLapog/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Mandira Bedi Bowled Over at the Colgate National Conference"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Colgate National Conference</b><span>Mandira Bedi Bowled Over</span></span></a>
-      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=gWCqO-qwkMw"><img src="https://i.ytimg.com/vi/gWCqO-qwkMw/hqdefault.jpg" width="480" height="360" loading="lazy" alt="DIGI Telecom - Malaysia, invites Mastermind Deepak RAO for a 3 City Event"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>DIGI Telecom - Malaysia</b><span>invites the Mastermind to Johar Bahru, Penang and Kuala Lampur</span></span></a>
-      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=XbJd6hkGon4"><img src="https://i.ytimg.com/vi/XbJd6hkGon4/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Deepak Rao&#x27;s ESP Show - Nicholas Piramal, CLICK to see European Customers Response - Madrid, Spain !"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Nicholas Piramal European Customers Meet</b><span>Madrid, Spain</span></span></a>
-      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=gZbNKUERnHI"><img src="https://i.ytimg.com/vi/gZbNKUERnHI/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Deepak Rao demonstrates Mind Over Matter"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Deepak Rao demonstrates Mind Over Matter</b></span></a>
-      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=_jyIbbnyRQ4"><img src="https://i.ytimg.com/vi/_jyIbbnyRQ4/hqdefault.jpg" width="480" height="360" loading="lazy" alt="Deepak Rao&#x27;s &#x27;1 hour Star News Exclusive&#x27; Interview"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Star News Exclusive Research &amp; Coverage</b><span>The Mind is Limitless</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=XDVnIZUHPKo"><img src="https://i.ytimg.com/vi/XDVnIZUHPKo/hqdefault.jpg" width="480" height="360" loading="lazy" alt=""><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Tata Motors</b><span>ESP Show ends with a Standing Ovation !!</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=6CpfebQxhxY"><img src="https://i.ytimg.com/vi/6CpfebQxhxY/hqdefault.jpg" width="480" height="360" loading="lazy" alt=""><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Excitement, Shock &amp; Awe !! Raymond Sr. Management Conf.</b><span>Delegates Express Joy</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=dGsL0Ah8Ffw"><img src="https://i.ytimg.com/vi/dGsL0Ah8Ffw/hqdefault.jpg" width="480" height="360" loading="lazy" alt=""><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Harsh Goenka ( RPG Chief )</b><span>participates with Deepak Rao</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=RMxZnpLapog"><img src="https://i.ytimg.com/vi/RMxZnpLapog/hqdefault.jpg" width="480" height="360" loading="lazy" alt=""><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Colgate National Conference</b><span>Mandira Bedi Bowled Over</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=gWCqO-qwkMw"><img src="https://i.ytimg.com/vi/gWCqO-qwkMw/hqdefault.jpg" width="480" height="360" loading="lazy" alt=""><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>DIGI Telecom - Malaysia</b><span>invites the Mastermind to Johar Bahru, Penang and Kuala Lampur</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=XbJd6hkGon4"><img src="https://i.ytimg.com/vi/XbJd6hkGon4/hqdefault.jpg" width="480" height="360" loading="lazy" alt=""><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Nicholas Piramal European Customers Meet</b><span>Madrid, Spain</span></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=gZbNKUERnHI"><img src="https://i.ytimg.com/vi/gZbNKUERnHI/hqdefault.jpg" width="480" height="360" loading="lazy" alt=""><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Deepak Rao demonstrates Mind Over Matter</b></span></a>
+      <a class="vcard" data-yt href="https://www.youtube.com/watch?v=_jyIbbnyRQ4"><img src="https://i.ytimg.com/vi/_jyIbbnyRQ4/hqdefault.jpg" width="480" height="360" loading="lazy" alt=""><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><span class="vmeta"><b>Star News Exclusive Research &amp; Coverage</b><span>The Mind is Limitless</span></span></a>
     </div>
   </div>
 </section>
@@ -537,17 +598,17 @@ html:not(.js) .tst-nav{display:none}
 <section class="sec book" id="book">
   <div class="wrap">
     <div class="book-grid">
-      <div class="tilt" data-reveal><div class="tilt-card" data-tilt><img src="assets/img/img051.jpg" width="600" height="745" loading="lazy" alt="Magna Books advertisement for Deepak Rao’s book on Extra Sensory Perception"></div></div>
+      <div class="tilt" data-reveal><div class="tilt-card" data-tilt><img src="assets/img/img051.webp" width="600" height="745" loading="lazy" alt="Magna Books advertisement for Deepak Rao’s book on Extra Sensory Perception"></div></div>
       <div>
         <h2 class="h2 split" data-split>Unlock Your <em class="gold">ESP Potential</em></h2>
-        <div class="sold"><span class="lbl">Sold Over</span><span class="num"><b class="gold" data-num>1,00,000</b></span></div>
+        <div class="sold-row"><a class="book-mini" href="esp-book.html"><img src="assets/img/img059.gif" width="116" height="180" loading="lazy" alt="Unlock Your Extra Sensory Perception Deepak RAO"></a><div class="sold"><span class="lbl">Sold Over</span><span class="num"><b class="gold" data-num>1,00,000</b></span></div></div>
         <div class="book-links" data-reveal>
           <a class="btn btn-gold magnetic" href="esp-book.html">Deepak RAO's ESP Book - 7th Edition OUT</a>
           <a class="btn btn-ghost magnetic" href="book-launches.html">Click : See Book Launches</a>
         </div>
       </div>
     </div>
-    <figure class="signing" data-reveal><div class="ph"><img src="assets/img/img068.jpg" width="1299" height="787" loading="lazy" alt="Deepak Rao autographing copies of his book for a crowd of guests"></div><figcaption>Excited audience getting their copy of the ESP Book - Autographed</figcaption></figure>
+    <figure class="signing" data-reveal><div class="ph"><img src="assets/img/img068.webp" width="1299" height="787" loading="lazy" alt="Deepak Rao autographing copies of his book for a crowd of guests"></div><figcaption>Excited audience getting their copy of the ESP Book - Autographed</figcaption></figure>
   </div>
 </section>
 
@@ -567,11 +628,25 @@ html:not(.js) .tst-nav{display:none}
       <h2 class="h2 gold split" data-split>The 7th Sense</h2>
       <ul data-reveal><li>60 mins. - Edu-taining</li><li>Shock &amp; Awe,</li><li>Audience Participatory</li><li>Experiments.</li></ul>
     </div>
-    <figure class="usa" data-reveal><div class="tilt"><div class="tilt-card" data-tilt><img src="assets/img/img054.png" width="1216" height="1754" loading="lazy" alt="Tour poster for Deepak RAO’s Extra Sensory Perception show across seven USA cities"></div></div><figcaption><span>7 Cities</span><span>Back Again</span><span>Across USA</span></figcaption></figure>
+    <figure class="usa" data-reveal><div class="tilt"><div class="tilt-card" data-tilt><img src="assets/img/img054.webp" width="1216" height="1754" loading="lazy" alt="Tour poster for Deepak RAO’s Extra Sensory Perception show across seven USA cities"></div></div><figcaption><span>7 Cities</span><span>Back Again</span><span>Across USA</span></figcaption></figure>
   </div>
 </section>
 
 <!-- CONTACT -->
+<!-- EXPLORE: the old home's button board (img045 + Map3), now real links -->
+<nav class="sec explore" aria-label="Deepak RAO’s">
+  <div class="wrap ex-grid">
+    <a class="ex ex-wide" href="clients.html" title="Check-out Clientele Photos" data-reveal><b>Corporate Clientele</b><span>Event Photos</span><span>Videos</span></a>
+    <a class="ex" href="https://deepakraopresscoverage.weebly.com/" title="National &amp; International Press Articles" data-reveal><b>Press Coverage</b></a>
+    <a class="ex" href="profile.html" title="Deepak RAO's Profile" data-reveal><b>Deepak RAO</b><span>‘Unplugged’</span></a>
+    <a class="ex" href="show.html" title="All about the ESP Session" data-reveal><b>What’s it about</b></a>
+    <a class="ex" href="testimonials.html" title="Testimonials of Corporate Honchos" data-reveal><b>Testimonials</b></a>
+    <a class="ex" href="mental-abilities.html" title="Mental Abilities" data-reveal><b>Mental Abilities</b></a>
+    <a class="ex" href="audience-feedback.html" title="Audience Response" data-reveal><b>Audience</b><span>Response</span></a>
+    <a class="ex ex-call" href="tel:+919820684840" data-reveal><span class="ex-7"><small>Ask for our</small> <small>BRAND NEW SHOW</small> <b>The 7th Sense</b></span><span class="ex-num">CALL : +91 98206 84840</span></a>
+  </div>
+</nav>
+
 <section class="sec contact" id="contact" data-spot>
   <div class="wrap">
     <h2 class="h2 split" data-split>Please connect with us <em class="gold">DIRECTLY....</em></h2>
@@ -585,14 +660,14 @@ html:not(.js) .tst-nav{display:none}
 
 <footer class="ftr">
   <div class="wrap ftr-grid">
-    <div><img src="assets/img/img052.png" width="811" height="108" alt="Extra Sensory Perception"><p>Master Mind -- Deepak RAO</p></div>
-    <div><h3>Befriend Us :</h3><ul>
-      <li><a href="https://www.facebook.com/deepak.rao.9085?mibextid=2JQ9oc" target="_blank" rel="noopener">Connect on Facebook</a></li>
-      <li><a href="https://www.linkedin.com/in/deepak-rao-33552023" target="_blank" rel="noopener">Connect on Linkedin</a></li>
-      <li><a href="https://www.instagram.com/deepakrao_esp?igsh=eGlvMXlycGFvdndk" target="_blank" rel="noopener">Connect on Instagram</a></li></ul></div>
-    <div><h3>Deepak RAO’s</h3><ul>
+    <div><img src="assets/img/img052.webp" width="811" height="108" alt="Extra Sensory Perception"><p>Master Mind -- Deepak RAO</p><p class="views"><span>Website</span> <span>Views :</span> <img src="assets/img/img020.webp" width="158" height="20" loading="lazy" alt="0412994"></p></div>
+    <div><h2>Befriend Us :</h2><ul>
+      <li><a href="https://www.facebook.com/deepak.rao.9085?mibextid=2JQ9oc">Connect on Facebook</a></li>
+      <li><a href="https://www.linkedin.com/in/deepak-rao-33552023">Connect on Linkedin</a></li>
+      <li><a href="https://www.instagram.com/deepakrao_esp?igsh=eGlvMXlycGFvdndk">Connect on Instagram</a></li></ul></div>
+    <div><h2>Deepak RAO’s</h2><ul>
       <li><a href="show.html">What’s it about</a></li><li><a href="clients.html">Corporate Clientele</a></li><li><a href="testimonials.html">Testimonials</a></li>
-      <li><a href="videos.html">Videos</a></li><li><a href="https://deepakraopresscoverage.weebly.com/" target="_blank" rel="noopener">Press Coverage</a></li><li><a href="esp-book.html">ESP Book</a></li></ul></div>
+      <li><a href="videos.html">Videos</a></li><li><a href="https://deepakraopresscoverage.weebly.com/">Press Coverage</a></li><li><a href="esp-book.html">ESP Book</a></li></ul></div>
   </div>
 </footer>
 
@@ -625,6 +700,8 @@ html:not(.js) .tst-nav{display:none}
   $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
     const t = document.getElementById(a.getAttribute('href').slice(1)); if (!t) return;
     e.preventDefault(); closeMenu(); goTo(t);
+    if (!t.hasAttribute('tabindex')) t.tabIndex = -1;
+    t.focus({ preventScroll: true });            // keyboard users carry on from the target
   }));
 
   /* ---------- header hide / solid ---------- */
@@ -635,8 +712,9 @@ html:not(.js) .tst-nav{display:none}
 
   /* ---------- mobile menu ---------- */
   const menuBtn = $('.hdr .menu-btn');
-  function closeMenu() { if (menu.hidden) return; menu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); lenis && lenis.start(); menuBtn.focus({ preventScroll: true }); }
-  menuBtn.addEventListener('click', () => { menu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); lenis && lenis.stop(); $('.menu-close').focus(); });
+  const behind = ['.skip', '#hdr', 'main', '.ftr', '.dock'].map(q => $(q)).filter(Boolean);   // inert while the menu is open
+  function closeMenu() { if (menu.hidden) return; menu.hidden = true; behind.forEach(el => { el.inert = false; }); menuBtn.setAttribute('aria-expanded', 'false'); lenis && lenis.start(); menuBtn.focus({ preventScroll: true }); }
+  menuBtn.addEventListener('click', () => { menu.hidden = false; behind.forEach(el => { el.inert = true; }); menuBtn.setAttribute('aria-expanded', 'true'); lenis && lenis.stop(); $('.menu-close').focus(); });
   $('.menu-close').addEventListener('click', closeMenu);
   addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
@@ -646,24 +724,41 @@ html:not(.js) .tst-nav{display:none}
   $$('[data-yt]').forEach(a => a.addEventListener('click', e => {
     const id = ytId(a.href); if (!id || !lb.showModal) return;
     e.preventDefault();
-    frame.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="YouTube"></iframe>`;
+    const f = document.createElement('iframe');
+    f.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen; compute-pressure'; f.allowFullscreen = true;
+    f.title = (a.getAttribute('aria-label') || a.innerText || (a.querySelector('img') || {}).alt || 'YouTube').replace(/\s+/g, ' ').trim();
+    frame.replaceChildren(f);
     lb.showModal(); lenis && lenis.stop();
   }));
   const closeLb = () => { lb.close(); };
-  lb.addEventListener('close', () => { frame.innerHTML = ''; lenis && lenis.start(); });
+  lb.addEventListener('close', () => { frame.innerHTML = ''; lb.classList.remove('lb-img'); lenis && lenis.start(); });
+  /* the whole VIP poster opens in the lightbox as a scrollable panel (without JS the link opens the image itself) */
+  const zoom = $('.vip-zoom');
+  zoom && zoom.addEventListener('click', e => {
+    if (!lb.showModal) return; e.preventDefault();
+    const im = document.createElement('img'); im.className = 'lb-poster'; im.src = zoom.href; im.alt = (zoom.querySelector('img') || {}).alt || '';
+    frame.replaceChildren(im); lb.classList.add('lb-img'); lb.showModal(); lenis && lenis.stop();
+  });
   $('[data-close]', lb).addEventListener('click', closeLb);
   lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
 
   /* ---------- testimonials slider ---------- */
   const slides = $$('[data-slider] .slide'), dots = $('[data-dots]'); let cur = 0, timer;
   slides.forEach((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', `${i + 1}`); b.addEventListener('click', () => show(i, true)); dots.appendChild(b); });
+  let stopped = reduce;      // rotation stops for good once someone hovers, focuses or uses the controls (WCAG 2.2.2)
+  const stop = () => { if (stopped) return; stopped = true; clearInterval(timer); $('[data-slider]').setAttribute('aria-live', 'polite'); };
   function show(i, user) {
     cur = (i + slides.length) % slides.length;
     slides.forEach((s, k) => s.classList.toggle('on', k === cur));
     $$('button', dots).forEach((d, k) => d.setAttribute('aria-current', k === cur ? 'true' : 'false'));
-    clearInterval(timer); if (!reduce) timer = setInterval(() => show(cur + 1), user ? 12000 : 8000);
+    clearInterval(timer); if (user) stop(); if (!stopped) timer = setInterval(() => show(cur + 1), 8000);
   }
-  if (slides.length) { $('[data-prev]').addEventListener('click', () => show(cur - 1, true)); $('[data-next]').addEventListener('click', () => show(cur + 1, true)); show(0); }
+  if (slides.length) {
+    $('[data-prev]').addEventListener('click', () => show(cur - 1, true)); $('[data-next]').addEventListener('click', () => show(cur + 1, true)); show(0);
+    const box = $('[data-slider]').closest('.tst-wrap') || $('[data-slider]');
+    ['pointerenter', 'focusin'].forEach(t => box.addEventListener(t, stop));
+  }
 
   const dock = $('.dock'), heroCta = $('.hero .ctas');
   if (dock && heroCta && 'IntersectionObserver' in window) new IntersectionObserver(([en]) => dock.classList.toggle('hide', en.isIntersecting)).observe(heroCta);
@@ -724,12 +819,13 @@ html:not(.js) .tst-nav{display:none}
 
   /* ---------- split helpers ---------- */
   const splitWords = el => {
+    el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
     const walk = node => [...node.childNodes].forEach(n => {
       if (n.nodeType === 3) {
         const frag = document.createDocumentFragment();
-        n.textContent.split(/(\s+)/).forEach(t => {
+        n.textContent.split(/([ \t\n\r\f]+)/).forEach(t => {
           if (!t) return;
-          if (/^\s+$/.test(t)) { frag.append(t); return; }
+          if (/^[ \t\n\r\f]+$/.test(t)) { frag.append(t); return; }
           const w = document.createElement('span'); w.className = 'w';
           const i = document.createElement('span'); i.className = 'wi'; i.textContent = t; w.append(i); frag.append(w);
         });
@@ -737,14 +833,16 @@ html:not(.js) .tst-nav{display:none}
       } else if (n.nodeType === 1) walk(n);
     });
     walk(el);
+    $$('.w', el).forEach(w => w.setAttribute('aria-hidden', 'true'));
     [el, ...$$('.gold', el)].forEach(g => { if (!g.classList.contains('gold')) return; $$('.wi', g).forEach(w => w.classList.add('gold')); g.classList.remove('gold'); });
     return $$('.wi', el);
   };
   const title = $('[data-title]');
   const chars = (() => {
+    title.setAttribute('aria-label', title.textContent.trim());
     const words = title.textContent.split(' '); title.textContent = '';
     words.forEach((w, k) => {
-      const ws = document.createElement('span'); ws.className = 'w';
+      const ws = document.createElement('span'); ws.className = 'w'; ws.setAttribute('aria-hidden', 'true');
       [...w].forEach(c => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; ws.append(s); });
       title.append(ws); if (k < words.length - 1) title.append(' ');
     });
@@ -753,7 +851,7 @@ html:not(.js) .tst-nav{display:none}
 
   /* ---------- intro ---------- */
   G.set(chars, { yPercent: 110 });
-  G.set('[data-hero]', { y: 30, autoAlpha: 0 });
+  G.set('[data-hero]', { y: 30, opacity: 0 });
   G.set('.hero-media img', { scale: 1.18, autoAlpha: 0 });
   G.set('.beams', { autoAlpha: 0 });
   G.set('[data-seal]', { scale: .4, rotate: -40, autoAlpha: 0 });
@@ -763,7 +861,7 @@ html:not(.js) .tst-nav{display:none}
     tl.to('.hero-media img', { scale: 1, autoAlpha: 1, duration: 2.6 }, .2)
       .to('.beams', { autoAlpha: 1, duration: 2.2 }, .5)
       .to(chars, { yPercent: 0, duration: 1.4, stagger: .045 }, .55)
-      .to('[data-hero]', { y: 0, autoAlpha: 1, duration: 1.2, stagger: .12 }, .9)
+      .to('[data-hero]', { y: 0, opacity: 1, duration: 1.2, stagger: .12 }, .9)
       .to('[data-seal]', { scale: 1, rotate: 0, autoAlpha: 1, duration: 1.6, ease: 'back.out(1.6)' }, 1.3)
       .add(() => html.classList.add('intro-done'));
   };
@@ -778,11 +876,20 @@ html:not(.js) .tst-nav{display:none}
     const w = splitWords(h);
     G.from(w, { yPercent: 110, duration: 1.3, ease: 'expo.out', stagger: .06, scrollTrigger: { trigger: h, start: 'top 85%' }, onComplete: () => h.classList.add('done') });
   });
-  $$('[data-reveal]').forEach(el => G.from(el, { y: 46, autoAlpha: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 88%' } }));
+  $$('[data-reveal]').forEach(el => G.from(el, { y: 46, opacity: 0, duration: 1.2, ease: 'expo.out', clearProps: 'transform,translate,rotate,scale', scrollTrigger: { trigger: el, start: 'top 88%' } }));
   $$('[data-rule]').forEach(el => G.from(el, { scaleX: 0, duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 90%' } }));
   $$('[data-num]').forEach(el => G.from(el, { yPercent: 105, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 92%' } }));
   $$('.shot-img img, .vcard img, .signing img').forEach(img => G.fromTo(img, { scale: 1.18 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: true } }));
-  G.from('.vcard', { y: 60, autoAlpha: 0, duration: 1.2, ease: 'expo.out', stagger: .08, scrollTrigger: { trigger: '.vgrid', start: 'top 82%' } });
+  G.from('.vcard', { y: 60, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: .08, clearProps: 'transform,translate,rotate,scale', scrollTrigger: { trigger: '.vgrid', start: 'top 82%' } });
+
+  /* whatever takes keyboard focus shows at once, even before its reveal has played */
+  addEventListener('focusin', e => {
+    const el = e.target.closest && e.target.closest('[data-reveal], [data-hero], .vcard');
+    if (el && getComputedStyle(el).opacity !== '1') G.to(el, { opacity: 1, y: 0, duration: .3, overwrite: true });
+  });
+  /* client names drift with the scroll, never on their own */
+  $$('.mq-track').forEach((t, k) => G.fromTo(t, { x: () => (k % 2 ? -.6 : 0) * innerWidth }, { x: () => (k % 2 ? 0 : -.6) * innerWidth, ease: 'none',
+    scrollTrigger: { trigger: '.mq', start: 'top bottom', end: 'bottom top', scrub: .5, invalidateOnRefresh: true } }));
 
   /* ---------- VIP: list lights up, poster pans ---------- */
   $$('.vip-item').forEach(it => ST.create({ trigger: it, start: 'top 62%', end: 'bottom 38%', toggleClass: 'on' }));
